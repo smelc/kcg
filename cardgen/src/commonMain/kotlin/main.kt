@@ -4,6 +4,7 @@ import com.soywiz.korge.tween.*
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.*
 import com.soywiz.korim.color.Colors
+import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.format.*
 import com.soywiz.korio.async.launchImmediately
 import com.soywiz.korio.file.std.*
@@ -16,7 +17,7 @@ suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"
 	val goodArcher = creatures.sliceWithSize(72, 24, 24, 24);
 	val goblin = creatures.sliceWithSize(24, 360, 24, 24);
 
-	val h = height
+	val h : Double = height
     val w = width
 
 	val xStep = w / 4
@@ -37,6 +38,11 @@ suspend fun main() = Korge(width = 512, height = 512, bgcolor = Colors["#2b2b2b"
 			scale(2f)
 		}
 	}
+
+    // val bitmapRgba : RGBA = RGBA.unclamped(255, 255, 255, 150)
+    // val out = Bitmap32(128, 128, bitmapRgba, false)
+	val bmp = renderToBitmap(this.views)
+	bmp.writeTo("/tmp/demo.png".uniVfs, PNG)
 
 	/* launchImmediately {
 		while (true) {
