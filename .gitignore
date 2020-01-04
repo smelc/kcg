@@ -1,6 +1,8 @@
-/.gradle
-/.idea
-/build
+screenshots
+
+cardgen/.gradle
+cardgen/.idea
+cardgen/build
 *.iml
 *.hprof
 *.log
