@@ -1,0 +1,15 @@
+<!-- The configuration used to test https://github.com/smelc/kcg -->
+<config>
+  <substitution>
+    <entry name="jsonlint" value="jsonlint-php"/>
+    <entry name="gradle" value="./gradlew"/>
+  </substitution>
+  <builder name="kcg">
+    <!-- json -->
+    <shell command="which $[jsonlint]"/>
+    <shell command="$[jsonlint] cardgen/src/commonMain/resources/creatures.json"/>
+    <!-- build -->
+    <shell command="$[gradle] jvmMainClasses" workdir="cardgen"/>
+    <shell command="$[gradle] jvmTestClasses" workdir="cardgen"/>
+  </builder>
+</config>

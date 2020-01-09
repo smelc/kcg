@@ -6,6 +6,9 @@ import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.format.*
 import com.soywiz.korio.file.std.*
 import creatures.Creature
+import twod.IntRect
+import twod.solidInnerBorders
+import twod.solidIntRect
 
 /**
  * 96/24 = 4 and 96/16 = 6
@@ -33,8 +36,11 @@ fun Stage.prepareCard(creature: Creature, cbmp: BitmapSlice<Bitmap>) {
 	val h : Double = height
     val w = width
 
-	val background: RGBA = RGBA.unclamped(247, 232, 150, 150)
+	val background: RGBA = RGBA.unclamped(247, 232, 150, 255)
 	solidRect(w, h, background)
+    val rect = IntRect(0, 0, w.toInt(), h.toInt())
+	// solidInnerBorders(rect.shrink(), Colors.BLACK)
+	solidIntRect(rect.shrink(), Colors.BLACK)
 
 	image(cbmp) {
 		position((w - cbmp.width) / 2, (h - cbmp.height) / 2)
