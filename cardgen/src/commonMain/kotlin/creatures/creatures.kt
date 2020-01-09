@@ -7,7 +7,7 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.serialization.json.Json
-import twod.IntRect
+import com.soywiz.korma.geom.RectangleInt
 
 enum class Team(val color: RGBA) {
     HUMAN(Colors.GREEN),
@@ -30,14 +30,14 @@ data class Creature(val name: String, val race: Team, val attack: Int, var hps: 
             val topList: List<*>? = topLevel["creatures"] as? List<*>
             val data = topList?.map { x -> readCreature(x)} ?: emptyList();
             println("Read ${data.size} creatures from disk")
-            return data.map { (c, r) -> Pair(c, creaturesBmp.sliceWithSize(r.x, r.y, r.w, r.h)) }
+            return data.map { (c, r) -> Pair(c, creaturesBmp.sliceWithSize(r.x, r.y, r.width, r.height)) }
         }
 
-        private fun readCreature(input: Any?) : Pair<Creature, IntRect> {
+        private fun readCreature(input: Any?) : Pair<Creature, RectangleInt> {
             val map: Map<*, *> = input as? Map<*, *> ?: throw IllegalStateException()
 
             val name: String = map["name"] as? String ?: throw IllegalStateException("Creature misses field \"name\"")
-            val genErrMsg: (String) -> String = { x: String -> "Creature ${name} misses field \"${x}\"" }
+            val genErrMsg: (String) -> String = { x: String -> "Creature $name misses field \"${x}\"" }
 
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
@@ -48,7 +48,7 @@ data class Creature(val name: String, val race: Team, val attack: Int, var hps: 
             val y: Int = map["y"] as? Int ?: throw IllegalStateException(genErrMsg("y"))
             val w: Int = map["w"] as? Int ?: 24 // default
             val h: Int = map["h"] as? Int ?: 24 // default
-            val rect = IntRect(x, y, w, h)
+            val rect = RectangleInt(x, y, w, h)
 
             return Pair(Creature(name, Team.HUMAN, hp, attack, victoryPoints, skills), rect)
         }
