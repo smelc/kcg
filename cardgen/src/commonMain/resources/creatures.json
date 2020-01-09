@@ -1,6 +1,6 @@
 {
   "creatures":[
-    { "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
-    { "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":24, "y":0 }
+    { "team":"human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":24, "y":0 }
+    { "team":"human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
   ]
 }

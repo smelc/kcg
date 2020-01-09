@@ -39,7 +39,7 @@ fun Stage.prepareCard(creature: Creature, cbmp: BitmapSlice<Bitmap>) {
 	val background: RGBA = RGBA.unclamped(247, 232, 150, 255)
 	solidRect(w, h, background)
     val rect: RectangleInt = RectangleInt.invoke(0, 0, w.toInt(), h.toInt())
-	solidInnerBorders(rect.shrink(), Colors.BLACK)
+	solidInnerBorders(rect.shrink(), creature.team.color)
 
 	image(cbmp) {
 		position((w - cbmp.width) / 2, (h - cbmp.height) / 3)

@@ -10,15 +10,20 @@ import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
 
 enum class Team(val color: RGBA) {
-    HUMAN(Colors.GREEN),
-    ORC(Colors.RED)
+    HUMAN(RGBA.unclamped(14, 123, 178, 255)),
+    ORC(Colors.RED);
+}
+
+private fun findTeam(s: String): Team? {
+    if (s == null) return null
+    return Team.values().firstOrNull { it.name.equals(s, true) }
 }
 
 enum class Skill {
     HitFromBack
 }
 
-data class Creature(val name: String, val race: Team, val attack: Int, var hps: Int, val victoryPoints: Int, val skill: List<Skill>) {
+data class Creature(val name: String, val team: Team, val attack: Int, var hps: Int, val victoryPoints: Int, val skill: List<Skill>) {
 
     companion object {
 
@@ -39,6 +44,8 @@ data class Creature(val name: String, val race: Team, val attack: Int, var hps: 
             val name: String = map["name"] as? String ?: throw IllegalStateException("Creature misses field \"name\"")
             val genErrMsg: (String) -> String = { x: String -> "Creature $name misses field \"${x}\"" }
 
+            val teamString: String = map["team"] as? String ?: throw IllegalStateException(genErrMsg("team"))
+            val team: Team = findTeam(teamString) ?: throw IllegalStateException("No such team: $teamString")
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
             val victoryPoints: Int = map["victory_points"] as? Int ?: throw IllegalStateException(genErrMsg("victoryPoints"))
@@ -50,7 +57,7 @@ data class Creature(val name: String, val race: Team, val attack: Int, var hps: 
             val h: Int = map["h"] as? Int ?: 24 // default
             val rect = RectangleInt(x, y, w, h)
 
-            return Pair(Creature(name, Team.HUMAN, hp, attack, victoryPoints, skills), rect)
+            return Pair(Creature(name, team, hp, attack, victoryPoints, skills), rect)
         }
 
         private fun readSkill(input: Any?) : List<Skill> {
