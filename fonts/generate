@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# ./fontbm-0.2.1 --font-file parasite-src/pixelart.ttf --output parasite
+./fontbm-0.2.1 --font-file romulus.ttf --output ../cardgen/src/commonMain/resources/romulus
