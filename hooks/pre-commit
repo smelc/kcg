@@ -1,0 +1,9 @@
+#!/bin/bash
+
+function run() {
+  echo "$@"
+  $@
+}
+
+[[ -e "zzbot" ]] || { echo "zzbot must be installed: https://github.com/smelc/zzbot"; exit 1; }
+./zzbot test/zzbot.xml

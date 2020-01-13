@@ -7,7 +7,7 @@
   <builder name="kcg">
     <!-- json -->
     <shell command="which $[jsonlint]"/>
-    <shell command="$[jsonlint] cardgen/src/commonMain/resources/creatures.json"/>
+    <shell command="$[jsonlint] cardgen/src/commonMain/resources/data.json"/>
     <!-- build -->
     <shell command="$[gradle] jvmMainClasses" workdir="cardgen"/>
     <shell command="$[gradle] jvmTestClasses" workdir="cardgen"/>

@@ -14,7 +14,7 @@ enum class Team(val color: RGBA) {
     ORC(Colors.RED);
 }
 
-private fun findTeam(s: String): Team? {
+private fun findTeam(s: String?): Team? {
     if (s == null) return null
     return Team.values().firstOrNull { it.name.equals(s, true) }
 }
