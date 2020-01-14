@@ -23,7 +23,7 @@ enum class Skill {
     HitFromBack
 }
 
-data class Creature(val name: String, val team: Team, val attack: Int, var hps: Int, val victoryPoints: Int, val skill: List<Skill>) {
+data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val victoryPoints: Int, val skill: List<Skill>) {
 
     companion object {
 

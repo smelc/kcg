@@ -1,3 +1,4 @@
+import card.*
 import com.soywiz.korge.*
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.*
@@ -34,42 +35,11 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
  * @param cbmp The bitmap of [creature]
  */
 fun Stage.prepareCard(creature: Creature, cbmp: BitmapSlice<Bitmap>, font: BitmapFont, tiles: Map<Tile, BitmapSlice<Bitmap>>) {
-	val h : Double = height
-    val w = width
+	val cdi = CardDrawingInput(creature, cbmp, font, tiles)
 
-	val background: RGBA = RGBA.unclamped(247, 232, 150, 255)
-	solidRect(w, h, background)
-
-    var rect: RectangleInt = RectangleInt.invoke(0, 0, w.toInt(), h.toInt())
-    for (i in 0..4) {
-        rect = rect.shrink()
-		solidInnerBorders(rect, creature.team.color)
-	}
-
-	val creatureScale = 3.0
-	val imgx = (w - (cbmp.width * creatureScale)) / 2;  val imgxCenter = imgx + (cbmp.width / 2)
-    val imgy = (h - (cbmp.height * creatureScale)) / 8; val imgyCenter = imgy + (cbmp.height/ 2)
-	image(cbmp) {
-		position(imgx, imgy)
-		scale = creatureScale
-		smoothing = false
-	}
-
-	val texty = imgyCenter + cbmp.height / 2 + (font.fontSize * 2)
-
-	text(creature.name, font = font, textSize = font.fontSize.toDouble(), color = creature.team.color) {
-		position((w - textBounds.width) / 2, texty)
-	}
-
-	val hearty = texty + font.fontSize * 2
-	val leftMargin = font.fontSize
-
-    val hpText = text (creature.hps.toString(), font = font, textSize = font.fontSize.toDouble(), color = Colors.BLACK) {
-		position(leftMargin, hearty)
-	}
-	image(tiles[Tile.HEART] ?: error("heart tile not found")) {
-		position(leftMargin + hpText.textBounds.width, hearty)
-		scale = creatureScale - 1
-		smoothing = false
-	}
+	stage.putBackground(cdi)
+	stage.putBorder(cdi)
+    val tiley: Double = stage.putCreatureTile(cdi)
+	val texty = stage.putCreatureName(cdi, tiley)
+	stage.putStats(cdi, texty)
 }

@@ -5,6 +5,6 @@
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
-    { "name":"sword", "x":24, "y":0 }
+    { "name":"sword", "x":16, "y":0 }
   ]
 }

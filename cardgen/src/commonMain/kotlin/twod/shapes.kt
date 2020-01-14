@@ -22,7 +22,7 @@ fun Container.solidIntRect(r: RectangleInt, color: RGBA) {
     solidRect(r.width, r.height, color) { position(r.x, r.y) }
 }
 
-inline fun RectangleInt.shrink(): RectangleInt {
+fun RectangleInt.shrink(): RectangleInt {
     return RectangleInt.invoke(x + 1, y +1, max(0, width -2), max(0, height - 2))
 }
 
