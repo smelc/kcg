@@ -19,7 +19,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["tiles.png"].readBitmap())
 	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["creatures.png"].readBitmap())
 
-	val font = resourcesVfs["romulus.fnt"].readBitmapFont()
+	val font = resourcesVfs["romulus_medium_32.fnt"].readBitmapFont()
 
 	for ((i, p) in creatures.withIndex()) {
 		prepareCard(p.first, p.second, font, tiles)
