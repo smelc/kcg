@@ -29,26 +29,26 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
     }
 }
 
-/** @return The tile's y */
+/** @return The tile's bottom y */
 fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
     val imgx = (width - (cdi.cbmp.width * creatureScale)) / 2;
     val imgxCenter = imgx + (cdi.cbmp.width / 2)
     val imgy = (height - (cdi.cbmp.height * creatureScale)) / 8;
     val imgyCenter = imgy + (cdi.cbmp.height / 2)
-    image(cdi.cbmp) {
+    val img = image(cdi.cbmp) {
         position(imgx, imgy)
         scale = creatureScale
         smoothing = false
     }
-    return imgy
+    return imgy + img.height
 }
 
 /**
- * @param tiley The creature's tile y
+ * @param tileboty The creature's tile bottom y
  * @return The text's y
  */
-fun Stage.putCreatureName(cdi: CardDrawingInput, tiley: Double): Double {
-    val texty = tiley + cdi.cbmp.height / 2 + (cdi.font.fontSize * 2)
+fun Stage.putCreatureName(cdi: CardDrawingInput, tileboty: Double): Double {
+    val texty = tileboty
     val w = width
 
     text(cdi.creature.name, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.creature.team.color) {
