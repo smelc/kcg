@@ -8,9 +8,7 @@ import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korma.geom.RectangleInt
 import creatures.Creature
-import twod.Tile
-import twod.shrink
-import twod.solidInnerBorders
+import twod.*
 
 data class CardDrawingInput(val creature: Creature, val cbmp: BitmapSlice<Bitmap>, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
 
@@ -25,8 +23,13 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
     var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt())
     for (i in 0..4) {
         rect = rect.shrink()
-        solidInnerBorders(rect, cdi.creature.team.color)
+        solidInnerBorders(rect, cdi.creature.team.color.base)
     }
+}
+
+fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
+    var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt()).shrink()
+    solidPoint(rect.corner(Direction.TOP_LEFT), cdi.creature.team.color.lightest)
 }
 
 /** @return The tile's bottom y */
@@ -51,7 +54,7 @@ fun Stage.putCreatureName(cdi: CardDrawingInput, tileboty: Double): Double {
     val texty = tileboty
     val w = width
 
-    text(cdi.creature.name, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.creature.team.color) {
+    text(cdi.creature.name, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.creature.team.color.base) {
         position((w - textBounds.width) / 2, texty)
     }
 

@@ -8,10 +8,12 @@ import com.soywiz.korim.color.RGBA
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
+import creatures.TeamColors.HUMAN_COLORS
+import creatures.TeamColors.ORC_COLORS
 
-enum class Team(val color: RGBA) {
-    HUMAN(RGBA.unclamped(14, 123, 178, 255)),
-    ORC(Colors.RED);
+enum class Team(val color: TeamColor) {
+    HUMAN(HUMAN_COLORS),
+    ORC(ORC_COLORS)
 }
 
 private fun findTeam(s: String?): Team? {
