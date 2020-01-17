@@ -9,14 +9,15 @@ import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korma.geom.RectangleInt
 import creatures.Creature
 import twod.*
+import twod.Zone.Companion.solidZone
 
 data class CardDrawingInput(val creature: Creature, val cbmp: BitmapSlice<Bitmap>, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
 
-val creatureScale = 3.0
+const val creatureScale = 3.0
+val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
 
-fun Stage.putBackground(cdi: CardDrawingInput) {
-    val background: RGBA = RGBA.unclamped(247, 232, 150, 255)
-    solidRect(width, height, background)
+fun Stage.putBackground() {
+    solidRect(width, height, backgroundColor)
 }
 
 fun Stage.putBorder(cdi: CardDrawingInput) {
@@ -28,16 +29,30 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
 }
 
 fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
-    var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt()).shrink()
-    solidPoint(rect.corner(Direction.TOP_LEFT), cdi.creature.team.color.lightest)
+    val rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt()).shrink().shrink() // We need to shrink twice
+    // to be at the topleft of the border, because the border is the canvas shrank once, and then the inner borders are taken
+    rect.corners().forEach { solidPointInt(it, backgroundColor) }
+
+    val lighterZones: MutableList<Zone> = mutableListOf()
+    val lighterLen = (height / 8).toInt()
+    lighterZones.add(rect.corner(Direction.TOP_LEFT).down().toLine(lighterLen, false)) // bar going down on the left + 1
+    lighterZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.3).toInt(), true)) // bar going right
+    lighterZones.forEach {  solidZone(it, cdi.creature.team.color.lighter) }
+
+    val lighteRZones: MutableList<Zone> = mutableListOf()
+    lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().toLine((lighterLen * 0.3).toInt(), false)) // bar going down on the left + 1
+    lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().right().toLine((lighterLen * 0.05).toInt(), false)) // bar going down on the left + 1
+    lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.1).toInt(), true)) // bar going right one pixel below
+    lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().down().toLine((lighterLen * 0.05).toInt(), true)) // bar going right one pixel below
+    lighteRZones.forEach {  solidZone(it, cdi.creature.team.color.lighteR) }
+
+    solidPointInt(rect.corner(Direction.TOP_LEFT).plusx(1), cdi.creature.team.color.lightest)
 }
 
 /** @return The tile's bottom y */
 fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
-    val imgx = (width - (cdi.cbmp.width * creatureScale)) / 2;
-    val imgxCenter = imgx + (cdi.cbmp.width / 2)
-    val imgy = (height - (cdi.cbmp.height * creatureScale)) / 8;
-    val imgyCenter = imgy + (cdi.cbmp.height / 2)
+    val imgx = (width - (cdi.cbmp.width * creatureScale)) / 2
+    val imgy = (height - (cdi.cbmp.height * creatureScale)) / 8
     val img = image(cdi.cbmp) {
         position(imgx, imgy)
         scale = creatureScale

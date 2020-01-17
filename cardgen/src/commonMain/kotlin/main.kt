@@ -22,11 +22,11 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 
 	val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
 
-	for ((i, p) in creatures.withIndex()) {
+	for (p in creatures) {
 		prepareCard(p.first, p.second, font, tiles)
 
 		val bmp = renderToBitmap(this.views)
-		val path = "/tmp/demo${i}.png"
+		val path = "/tmp/${p.first.name}.png"
 		bmp.writeTo(path.uniVfs, PNG)
         println("Written $path")
 	}
@@ -38,7 +38,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 fun Stage.prepareCard(creature: Creature, cbmp: BitmapSlice<Bitmap>, font: BitmapFont, tiles: Map<Tile, BitmapSlice<Bitmap>>) {
 	val cdi = CardDrawingInput(creature, cbmp, font, tiles)
 
-	stage.putBackground(cdi)
+	stage.putBackground()
 	stage.putBorder(cdi)
 	stage.putBorderDecoration(cdi)
     val tiley: Double = stage.putCreatureTile(cdi)

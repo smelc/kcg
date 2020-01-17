@@ -1,3 +1,4 @@
+@KorgeCandidate
 enum class Direction {
     BOTTOM,
     BOTTOM_RIGHT,
