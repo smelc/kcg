@@ -41,7 +41,9 @@ data class LineInt(val x: Int, val y: Int, val length: Int, val horizontalOrVert
 
 @KorgeCandidate
 fun PointInt.toLine(len: Int, horizontalOrVertical: Boolean): LineInt {
-    return LineInt(x, y, len, horizontalOrVertical)
+    if (len > 0) return LineInt(x, y, len, horizontalOrVertical)
+    else if (horizontalOrVertical) return LineInt(x + len, y, -len, horizontalOrVertical)
+    else return LineInt(x, y + len, -len, horizontalOrVertical)
 }
 
 @KorgeCandidate
@@ -51,25 +53,27 @@ fun PointInt.right(): PointInt { return plusx(1) }
 @KorgeCandidate
 fun PointInt.plusy(plus: Int): PointInt { return PointInt(x, y + plus) }
 fun PointInt.up(): PointInt { return plusy(-1) }
+fun PointInt.up(amount: Int): PointInt { return plusy(-amount) }
 fun PointInt.down(): PointInt { return plusy(1) }
-
-@KorgeCandidate
-fun Container.solidLineInt(l: LineInt, color: RGBA) {
-    solidRectangleInt(l.toRectangleInt(), color)
-}
+fun PointInt.down(amount: Int): PointInt { return plusy(amount) }
 
 fun Container.solidInnerBorders(r: RectangleInt, color: RGBA) {
     r.innerBorders().forEach { this.solidLineInt(it, color) }
 }
 
 @KorgeCandidate
-fun Container.solidRectangleInt(r: RectangleInt, color: RGBA) {
-    solidRect(r.width, r.height, color) { position(r.x, r.y) }
+fun Container.solidLineInt(l: LineInt, color: RGBA) {
+    solidRectangleInt(l.toRectangleInt(), color)
 }
 
 @KorgeCandidate
 fun Container.solidPointInt(p : PointInt, color: RGBA) {
     solidRect(1, 1, color) { position(p.x, p.y) }
+}
+
+@KorgeCandidate
+fun Container.solidRectangleInt(r: RectangleInt, color: RGBA) {
+    solidRect(r.width, r.height, color) { position(r.x, r.y) }
 }
 
 @KorgeCandidate

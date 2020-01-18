@@ -10,6 +10,7 @@ import com.soywiz.korma.geom.RectangleInt
 import creatures.Creature
 import twod.*
 import twod.Zone.Companion.solidZone
+import twod.Zone.Companion.solidZones
 
 data class CardDrawingInput(val creature: Creature, val cbmp: BitmapSlice<Bitmap>, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
 
@@ -37,16 +38,21 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
     val lighterLen = (height / 8).toInt()
     lighterZones.add(rect.corner(Direction.TOP_LEFT).down().toLine(lighterLen, false)) // bar going down on the left + 1
     lighterZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.3).toInt(), true)) // bar going right
-    lighterZones.forEach {  solidZone(it, cdi.creature.team.color.lighter) }
+    solidZones(lighterZones, cdi.creature.team.color.lighter)
 
     val lighteRZones: MutableList<Zone> = mutableListOf()
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().toLine((lighterLen * 0.3).toInt(), false)) // bar going down on the left + 1
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().right().toLine((lighterLen * 0.05).toInt(), false)) // bar going down on the left + 1
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.1).toInt(), true)) // bar going right one pixel below
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().down().toLine((lighterLen * 0.05).toInt(), true)) // bar going right one pixel below
-    lighteRZones.forEach {  solidZone(it, cdi.creature.team.color.lighteR) }
+    solidZones(lighteRZones, cdi.creature.team.color.lighteR)
 
     solidPointInt(rect.corner(Direction.TOP_LEFT).plusx(1), cdi.creature.team.color.lightest)
+
+    val darkestZones: MutableList<Zone> = mutableListOf()
+    darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).up().toLine(-(lighterLen * 0.1).toInt(), false)) // bar going up
+    darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).left().toLine(-(lighterLen * 0.3).toInt(), true)) // bar going left
+    solidZones(darkestZones, cdi.creature.team.color.darkest)
 }
 
 /** @return The tile's bottom y */

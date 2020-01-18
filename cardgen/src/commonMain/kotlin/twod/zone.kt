@@ -29,6 +29,10 @@ interface Zone {
             // TODO smelc Optimize for some Zone subtypes
             z.get().forEach { solidPointInt(it, color) }
         }
+
+        fun Stage.solidZones(zones:  Iterable<Zone>, color: RGBA) {
+            zones.forEach { solidZone(it, color) }
+        }
     }
 
 }
