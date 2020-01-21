@@ -8,7 +8,9 @@ import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
 
 enum class Tile {
+    GREEN_POTION,
     HEART,
+    RED_POTION,
     SWORD;
 
     companion object {

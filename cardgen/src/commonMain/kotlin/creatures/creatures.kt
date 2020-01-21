@@ -1,5 +1,6 @@
 package creatures
 
+import card.ICard
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
 import com.soywiz.korim.bitmap.sliceWithSize

@@ -5,6 +5,8 @@
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
-    { "name":"sword", "x":16, "y":0 }
+    { "name":"sword", "x":16, "y":0 },
+    { "name":"red_potion", "x":32, "y":0, "text": "Heals 1HP" },
+    { "name":"green_potion", "x":48, "y":0, "text": "Restores full health" }
   ]
 }

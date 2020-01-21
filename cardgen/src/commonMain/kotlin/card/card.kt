@@ -12,7 +12,21 @@ import twod.*
 import twod.Zone.Companion.solidZone
 import twod.Zone.Companion.solidZones
 
-data class CardDrawingInput(val creature: Creature, val cbmp: BitmapSlice<Bitmap>, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
+interface ICard {
+
+    val title: String
+    fun getBitmap(): BitmapSlice<Bitmap>
+    fun getBaseColor(): RGBA
+
+}
+
+class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>) : ICard {
+    override val title: String = creature.name
+    override fun getBitmap(): BitmapSlice<Bitmap> { return bmp }
+    override fun getBaseColor(): RGBA { return creature.team.color.base }
+}
+
+data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
 
 const val creatureScale = 3.0
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
@@ -25,7 +39,7 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
     var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt())
     for (i in 0..4) {
         rect = rect.shrink()
-        solidInnerBorders(rect, cdi.creature.team.color.base)
+        solidInnerBorders(rect, cdi.card.getBaseColor())
     }
 }
 
@@ -57,9 +71,10 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
 
 /** @return The tile's bottom y */
 fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
-    val imgx = (width - (cdi.cbmp.width * creatureScale)) / 2
-    val imgy = (height - (cdi.cbmp.height * creatureScale)) / 8
-    val img = image(cdi.cbmp) {
+    val bmp = cdi.card.getBitmap()
+    val imgx = (width - (bmp.width * creatureScale)) / 2
+    val imgy = (height - (bmp.height * creatureScale)) / 8
+    val img = image(bmp) {
         position(imgx, imgy)
         scale = creatureScale
         smoothing = false
@@ -71,11 +86,11 @@ fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
  * @param tileboty The creature's tile bottom y
  * @return The text's y
  */
-fun Stage.putCreatureName(cdi: CardDrawingInput, tileboty: Double): Double {
+fun Stage.putTitle(cdi: CardDrawingInput, tileboty: Double): Double {
     val texty = tileboty
     val w = width
 
-    text(cdi.creature.name, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.creature.team.color.base) {
+    text(cdi.card.title, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.card.getBaseColor()) {
         position((w - textBounds.width) / 2, texty)
     }
 
@@ -85,12 +100,12 @@ fun Stage.putCreatureName(cdi: CardDrawingInput, tileboty: Double): Double {
 /**
  * @param texty The creature's name y
  */
-fun Stage.putStats(cdi: CardDrawingInput, texty: Double) {
+fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     val hearty = texty + cdi.font.fontSize * 1.5
     val leftMargin = cdi.font.fontSize
 
     /* Hitpoints */
-    val hpText = text (cdi.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
+    val hpText = text (card.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
         position(leftMargin, hearty)
     }
     image(cdi.tiles[Tile.HEART] ?: error("heart tile not found")) {
@@ -101,7 +116,7 @@ fun Stage.putStats(cdi: CardDrawingInput, texty: Double) {
 
     /* Attack */
     val attacky = hearty + cdi.font.fontSize
-    val attackText = text (cdi.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
+    val attackText = text (card.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
         position(leftMargin, attacky)
     }
     image(cdi.tiles[Tile.SWORD] ?: error("sword tile not found")) {

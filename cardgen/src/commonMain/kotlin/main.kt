@@ -17,16 +17,19 @@ import twod.Tile
 
 suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcolor = Colors["#2b2b2b"]) {
 	val dataJson = resourcesVfs["data.json"]
-	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["tiles.png"].readBitmap())
-	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["creatures.png"].readBitmap())
+	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
+	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24.png"].readBitmap())
 
 	val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
 
-	for (p in creatures) {
-		prepareCard(p.first, p.second, font, tiles)
+	var gendir = "/home/churlin/PERSONNEL/kcg/assets-gen"
+    if (!gendir.uniVfs.exists()) gendir = "/tmp"
+
+	for (card in creatures.map{ (c, bmp) -> CreatureCard(c, bmp) }) {
+		prepareCard(card, font, tiles)
 
 		val bmp = renderToBitmap(this.views)
-		val path = "/tmp/${p.first.name}.png"
+		val path = "${gendir}/${card.title}.png"
 		bmp.writeTo(path.uniVfs, PNG)
         println("Written $path")
 	}
@@ -35,13 +38,15 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 /**
  * @param cbmp The bitmap of [creature]
  */
-fun Stage.prepareCard(creature: Creature, cbmp: BitmapSlice<Bitmap>, font: BitmapFont, tiles: Map<Tile, BitmapSlice<Bitmap>>) {
-	val cdi = CardDrawingInput(creature, cbmp, font, tiles)
+fun Stage.prepareCard(card: ICard, font: BitmapFont, tiles: Map<Tile, BitmapSlice<Bitmap>>) {
+	val cdi = CardDrawingInput(card, font, tiles)
 
 	stage.putBackground()
 	stage.putBorder(cdi)
 	stage.putBorderDecoration(cdi)
     val tiley: Double = stage.putCreatureTile(cdi)
-	val texty = stage.putCreatureName(cdi, tiley)
-	stage.putStats(cdi, texty)
+	val texty = stage.putTitle(cdi, tiley)
+	when (card) {
+		is CreatureCard -> stage.putStats(cdi, card, texty)
+	}
 }
