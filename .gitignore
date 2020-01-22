@@ -3,6 +3,9 @@ help
 screenshots
 zzbot
 
+# vim
+*.swp
+
 cardgen/.gradle
 cardgen/.idea
 cardgen/build

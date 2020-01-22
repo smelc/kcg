@@ -1,18 +1,16 @@
 package creatures
 
-import card.ICard
+import color.ColorTheme
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
 import com.soywiz.korim.bitmap.sliceWithSize
-import com.soywiz.korim.color.Colors
-import com.soywiz.korim.color.RGBA
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
-import creatures.TeamColors.HUMAN_COLORS
-import creatures.TeamColors.ORC_COLORS
+import color.KcgColors.HUMAN_COLORS
+import color.KcgColors.ORC_COLORS
 
-enum class Team(val color: TeamColor) {
+enum class Team(val color: ColorTheme) {
     HUMAN(HUMAN_COLORS),
     ORC(ORC_COLORS)
 }

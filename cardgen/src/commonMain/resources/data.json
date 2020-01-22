@@ -3,10 +3,14 @@
     { "team":"human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":24, "y":0 },
     { "team":"human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 }
   ],
+  "neutral": [
+    { "name": "health" ,"tile":"red_potion", "text": "Heals 1HP" },
+    { "name": "life", "tile":"green_potion", "text": "Restores all HP" }
+  ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
     { "name":"sword", "x":16, "y":0 },
-    { "name":"red_potion", "x":32, "y":0, "text": "Heals 1HP" },
-    { "name":"green_potion", "x":48, "y":0, "text": "Restores full health" }
+    { "name":"red_potion", "x":32, "y":0 },
+    { "name":"green_potion", "x":48, "y":0 }
   ]
 }

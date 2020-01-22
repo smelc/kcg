@@ -24,7 +24,7 @@ enum class Tile {
             val topList: List<*>? = topLevel["tiles"] as? List<*>
             val data: List<Pair<Tile, RectangleInt>> = topList?.map { x -> readTile(x)} ?: emptyList()
             println("Read ${data.size} tiles from disk")
-            return data.map { (t, r) -> Pair(t, bmp.sliceWithSize(r.x, r.y, r.width, r.height)) }.associate { p -> p }
+            return data.map { (t, r) -> Pair(t, bmp.sliceWithSize(r.x, r.y, r.width, r.height)) }.toMap()
         }
 
         private fun readTile(input: Any?) : Pair<Tile, RectangleInt> {
@@ -45,7 +45,7 @@ enum class Tile {
     }
 }
 
-private fun findTile(s: String?): Tile? {
+public fun findTile(s: String?): Tile? {
     if (s == null) return null
     return Tile.values().firstOrNull { it.name.equals(s, true) }
 }

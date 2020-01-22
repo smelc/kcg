@@ -19,13 +19,18 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 	val dataJson = resourcesVfs["data.json"]
 	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
 	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24.png"].readBitmap())
+	val neutrals = Neutral.loadFromDisk(dataJson, tiles)
 
 	val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
 
 	var gendir = "/home/churlin/PERSONNEL/kcg/assets-gen"
     if (!gendir.uniVfs.exists()) gendir = "/tmp"
 
-	for (card in creatures.map{ (c, bmp) -> CreatureCard(c, bmp) }) {
+	val cards: MutableList<ICard> = mutableListOf()
+    cards.addAll(creatures.map{ (c, bmp) -> CreatureCard(c, bmp) })
+	cards.addAll(neutrals.values)
+
+	for (card in cards) {
 		prepareCard(card, font, tiles)
 
 		val bmp = renderToBitmap(this.views)

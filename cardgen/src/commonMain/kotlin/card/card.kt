@@ -1,5 +1,6 @@
 package card
 
+import color.ColorTheme
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
@@ -16,14 +17,14 @@ interface ICard {
 
     val title: String
     fun getBitmap(): BitmapSlice<Bitmap>
-    fun getBaseColor(): RGBA
+    fun getColorTheme(): ColorTheme
 
 }
 
 class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>) : ICard {
     override val title: String = creature.name
     override fun getBitmap(): BitmapSlice<Bitmap> { return bmp }
-    override fun getBaseColor(): RGBA { return creature.team.color.base }
+    override fun getColorTheme(): ColorTheme { return creature.team.color }
 }
 
 data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
@@ -39,7 +40,7 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
     var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt())
     for (i in 0..4) {
         rect = rect.shrink()
-        solidInnerBorders(rect, cdi.card.getBaseColor())
+        solidInnerBorders(rect, cdi.card.getColorTheme().base)
     }
 }
 
@@ -48,25 +49,27 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
     // to be at the topleft of the border, because the border is the canvas shrank once, and then the inner borders are taken
     rect.corners().forEach { solidPointInt(it, backgroundColor) }
 
+    val theme = cdi.card.getColorTheme()
+
     val lighterZones: MutableList<Zone> = mutableListOf()
     val lighterLen = (height / 8).toInt()
     lighterZones.add(rect.corner(Direction.TOP_LEFT).down().toLine(lighterLen, false)) // bar going down on the left + 1
     lighterZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.3).toInt(), true)) // bar going right
-    solidZones(lighterZones, cdi.creature.team.color.lighter)
+    solidZones(lighterZones, theme.lighter)
 
     val lighteRZones: MutableList<Zone> = mutableListOf()
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().toLine((lighterLen * 0.3).toInt(), false)) // bar going down on the left + 1
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).down().right().toLine((lighterLen * 0.05).toInt(), false)) // bar going down on the left + 1
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().toLine((lighterLen * 0.1).toInt(), true)) // bar going right one pixel below
     lighteRZones.add(rect.corner(Direction.TOP_LEFT).right().down().toLine((lighterLen * 0.05).toInt(), true)) // bar going right one pixel below
-    solidZones(lighteRZones, cdi.creature.team.color.lighteR)
+    solidZones(lighteRZones, theme.lighteR)
 
-    solidPointInt(rect.corner(Direction.TOP_LEFT).plusx(1), cdi.creature.team.color.lightest)
+    solidPointInt(rect.corner(Direction.TOP_LEFT).plusx(1), theme.lightest)
 
     val darkestZones: MutableList<Zone> = mutableListOf()
     darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).up().toLine(-(lighterLen * 0.1).toInt(), false)) // bar going up
     darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).left().toLine(-(lighterLen * 0.3).toInt(), true)) // bar going left
-    solidZones(darkestZones, cdi.creature.team.color.darkest)
+    solidZones(darkestZones, theme.darkest)
 }
 
 /** @return The tile's bottom y */
@@ -90,7 +93,7 @@ fun Stage.putTitle(cdi: CardDrawingInput, tileboty: Double): Double {
     val texty = tileboty
     val w = width
 
-    text(cdi.card.title, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.card.getBaseColor()) {
+    text(cdi.card.title, font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = cdi.card.getColorTheme().base) {
         position((w - textBounds.width) / 2, texty)
     }
 
