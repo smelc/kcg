@@ -1,4 +1,4 @@
-package twod
+package com.hgames.pcw.twod
 
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice

@@ -1,16 +1,12 @@
-package card
+package com.hgames.pcw
 
-import color.ColorTheme
-import color.KcgColors.NEUTRAL_COLORS
+import com.hgames.pcw.KcgColors.NEUTRAL_COLORS
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
-import com.soywiz.korim.bitmap.sliceWithSize
-import com.soywiz.korim.color.RGBA
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.serialization.json.Json
-import com.soywiz.korma.geom.RectangleInt
-import twod.Tile
-import twod.findTile
+import com.hgames.pcw.twod.Tile
+import com.hgames.pcw.twod.findTile
 
 enum class Neutral {
     GREEN_POTION,

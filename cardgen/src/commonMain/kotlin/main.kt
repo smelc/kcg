@@ -1,4 +1,4 @@
-import card.*
+import com.hgames.pcw.*
 import com.soywiz.korge.Korge
 import com.soywiz.korge.view.Stage
 import com.soywiz.korge.view.renderToBitmap
@@ -12,8 +12,7 @@ import com.soywiz.korim.format.readBitmap
 import com.soywiz.korim.format.writeTo
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.file.std.uniVfs
-import creatures.Creature
-import twod.Tile
+import com.hgames.pcw.twod.Tile
 
 suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcolor = Colors["#2b2b2b"]) {
 	val dataJson = resourcesVfs["data.json"]

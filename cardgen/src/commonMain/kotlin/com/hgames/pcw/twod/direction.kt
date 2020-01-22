@@ -1,3 +1,5 @@
+import com.hgames.pcw.KorgeCandidate
+
 @KorgeCandidate
 enum class Direction {
     BOTTOM,

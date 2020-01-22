@@ -1,10 +1,7 @@
-package twod
+package com.hgames.pcw.twod
 
-import KorgeCandidate
-import com.soywiz.korge.view.Container
+import com.hgames.pcw.KorgeCandidate
 import com.soywiz.korge.view.Stage
-import com.soywiz.korge.view.position
-import com.soywiz.korge.view.solidRect
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korma.geom.PointInt
 import com.soywiz.korma.geom.RectangleInt

@@ -1,6 +1,5 @@
-package card
+package com.hgames.pcw
 
-import color.ColorTheme
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
@@ -8,10 +7,8 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korma.geom.RectangleInt
-import creatures.Creature
-import twod.*
-import twod.Zone.Companion.solidZone
-import twod.Zone.Companion.solidZones
+import com.hgames.pcw.twod.*
+import com.hgames.pcw.twod.Zone.Companion.solidZones
 
 interface ICard {
 

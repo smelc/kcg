@@ -1,4 +1,4 @@
-package color
+package com.hgames.pcw
 
 import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA

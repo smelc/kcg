@@ -1,7 +1,7 @@
-package twod
+package com.hgames.pcw.twod
 
 import Direction
-import KorgeCandidate
+import com.hgames.pcw.KorgeCandidate
 import com.soywiz.korge.view.Container
 import com.soywiz.korge.view.position
 import com.soywiz.korge.view.solidRect
