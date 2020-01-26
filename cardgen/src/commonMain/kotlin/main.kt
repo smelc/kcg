@@ -13,8 +13,19 @@ import com.soywiz.korim.format.writeTo
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.file.std.uniVfs
 import com.hgames.pcw.twod.Tile
+import com.hgames.pcw.twod.Zone.Companion.solidZone
+import com.hgames.pcw.twod.solidPointInt
+import com.hgames.pcw.twod.toLine
+import com.hgames.pcw.twod.toZone
+import com.soywiz.korma.geom.PointInt
 
 suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcolor = Colors["#2b2b2b"]) {
+	// val zz = PointInt(0, 0)
+	// solidPointInt(zz, Colors.WHITE)
+	// solidZone(zz.toLine(height.toInt(), false).growRectangleInt(-1).toZone(), Colors.GREEN)
+
+	// return@Korge
+
 	val dataJson = resourcesVfs["data.json"]
 	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
 	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24.png"].readBitmap())

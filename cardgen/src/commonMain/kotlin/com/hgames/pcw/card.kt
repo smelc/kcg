@@ -28,14 +28,16 @@ data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Ma
 
 const val creatureScale = 3.0
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
+val borderSize = 5
 
 fun Stage.putBackground() {
     solidRect(width, height, backgroundColor)
 }
 
 fun Stage.putBorder(cdi: CardDrawingInput) {
-    var rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt())
-    for (i in 0..4) {
+    val canvas: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt())
+    var rect = canvas
+    for (i in 0 until borderSize) {
         rect = rect.shrink()
         solidInnerBorders(rect, cdi.card.getColorTheme().base)
     }
@@ -44,7 +46,6 @@ fun Stage.putBorder(cdi: CardDrawingInput) {
 fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
     val rect: RectangleInt = RectangleInt.invoke(0, 0, width.toInt(), height.toInt()).shrink().shrink() // We need to shrink twice
     // to be at the topleft of the border, because the border is the canvas shrank once, and then the inner borders are taken
-    rect.corners().forEach { solidPointInt(it, backgroundColor) }
 
     val theme = cdi.card.getColorTheme()
 
@@ -63,10 +64,31 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
 
     solidPointInt(rect.corner(Direction.TOP_LEFT).plusx(1), theme.lightest)
 
+    val bottomRight = rect.corner(Direction.BOTTOM_RIGHT)
+    val bottomLeft = rect.corner(Direction.BOTTOM_LEFT)
+
     val darkestZones: MutableList<Zone> = mutableListOf()
-    darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).up().toLine(-(lighterLen * 0.1).toInt(), false)) // bar going up
-    darkestZones.add(rect.corner(Direction.BOTTOM_RIGHT).left().toLine(-(lighterLen * 0.3).toInt(), true)) // bar going left
+    val darkestRect = bottomLeft.toLine(bottomRight.x - bottomLeft.x + 1, true).growRectangleInt(-borderSize)
+    darkestZones.add(darkestRect.toZone());
+    val atopLeftCorner = darkestRect.corner(Direction.TOP_LEFT).up(1).toLine(borderSize, true).growRectangleInt(borderSize / 2)
+    darkestZones.add(atopLeftCorner.toZone())
+    val atopRightCorner = darkestRect.corner(Direction.TOP_RIGHT).up(2).toLine(-borderSize, true).growRectangleInt(borderSize / 2)
+    darkestZones.add(atopRightCorner.toZone())
     solidZones(darkestZones, theme.darkest)
+
+    val darkerZones: MutableList<Zone> = mutableListOf()
+    darkerZones.add(atopLeftCorner.moveByY(-borderSize / 2).toZone())
+    darkerZones.add(atopRightCorner.moveByY(-borderSize / 2).toZone())
+    solidZones(darkerZones, theme.darker)
+
+    solidPointInt(atopRightCorner.corner(Direction.TOP_RIGHT).up(), theme.darkest)
+
+    val darkesTZones: MutableList<Zone> = mutableListOf()
+    darkesTZones.add(bottomRight.up().toZone())
+    darkesTZones.add(bottomRight.left().toLine(-(borderSize * 1.5).toInt(), true))
+    solidZones(darkesTZones, theme.darkesT)
+
+    rect.corners().forEach { solidPointInt(it, backgroundColor) }
 }
 
 /** @return The tile's bottom y */

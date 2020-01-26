@@ -23,8 +23,14 @@ data class LineInt(val x: Int, val y: Int, val length: Int, val horizontalOrVert
     fun moveByY(amount: Int): LineInt = LineInt(x, y + amount, length, horizontalOrVertical)
     val shrink: LineInt by lazy { LineInt(x, y, max(0, length - 1), horizontalOrVertical) }
     fun growRectangleInt(growAmount: Int): RectangleInt {
-        return if (horizontalOrVertical) RectangleInt(x, y, length, growAmount)
-        else RectangleInt(x, y, growAmount, length)
+        if (growAmount > 0) {
+            return if (horizontalOrVertical) RectangleInt(x, y, length, growAmount)
+            else RectangleInt(x, y + 1, growAmount, length)
+        }
+        // +1: offsets, so that growRectangleInt(1) and growRectangleInt(-1) have the same effect,
+        // in particular to preserve that in both cases the rectangle contains the initial line
+        return if (horizontalOrVertical) RectangleInt(x, y + growAmount + 1, length, -growAmount)
+        else RectangleInt(x + growAmount + 1, y, -growAmount, length)
     }
 
     override fun get(): Iterable<PointInt> {
@@ -42,8 +48,8 @@ data class LineInt(val x: Int, val y: Int, val length: Int, val horizontalOrVert
 @KorgeCandidate
 fun PointInt.toLine(len: Int, horizontalOrVertical: Boolean): LineInt {
     if (len > 0) return LineInt(x, y, len, horizontalOrVertical)
-    else if (horizontalOrVertical) return LineInt(x + len, y, -len, horizontalOrVertical)
-    else return LineInt(x, y + len, -len, horizontalOrVertical)
+    else if (horizontalOrVertical) return LineInt(x + 1 +  len, y, -len, horizontalOrVertical)
+    else return LineInt(x, y + 1 + len, -len, horizontalOrVertical)
 }
 
 @KorgeCandidate
@@ -84,6 +90,19 @@ fun RectangleInt.shrink(): RectangleInt {
 @KorgeCandidate
 fun RectangleInt.corners(): List<PointInt> {
     return listOf(corner(Direction.TOP_LEFT), corner(Direction.BOTTOM_LEFT), corner(Direction.BOTTOM_RIGHT), corner(Direction.TOP_RIGHT))
+}
+
+fun RectangleInt.moveByX(shift: Int): RectangleInt {
+    return RectangleInt(x + shift, y, width, height)
+}
+fun RectangleInt.moveByY(shift: Int): RectangleInt {
+    return RectangleInt(x, y + shift, width, height)
+}
+fun RectangleInt.down(): RectangleInt {
+    return moveByY(1)
+}
+fun RectangleInt.up(): RectangleInt {
+    return moveByY(-1)
 }
 
 fun RectangleInt.innerBorders(): List<LineInt> {

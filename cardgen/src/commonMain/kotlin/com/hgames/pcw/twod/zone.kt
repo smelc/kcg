@@ -36,8 +36,8 @@ interface Zone {
 
 fun RectangleInt.toZone(): Zone {
     val l: MutableList<PointInt> = mutableListOf()
-    for (px in x .. x + width) {
-        for (py in y .. y + height)
+    for (px in x until x + width) {
+        for (py in y until y + height)
             l.add(PointInt(px, py))
     }
     val immutList: List<PointInt> = l.toList()
