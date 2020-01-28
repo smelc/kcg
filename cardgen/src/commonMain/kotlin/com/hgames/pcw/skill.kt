@@ -19,7 +19,7 @@ enum class Skill {
          * @param file The file data.json
          * @param tiles the skills in data.json, there's at most one entry per member of [Skill]
          */
-        suspend fun <T : Bitmap> loadFromDisk(file: VfsFile) : List<SkillData> {
+        suspend fun loadFromDisk(file: VfsFile) : List<SkillData> {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyList()
             val topList: List<*>? = topLevel["skills"] as? List<*>
             val data: List<SkillData> = topList?.map(::readSkill) ?: emptyList()

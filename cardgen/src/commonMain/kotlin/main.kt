@@ -30,6 +30,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 	val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
 	val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24.png"].readBitmap())
 	val neutrals = Neutral.loadFromDisk(dataJson, tiles)
+	val skills = Skill.loadFromDisk(dataJson)
 
 	val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
 
@@ -37,11 +38,12 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
     if (!gendir.uniVfs.exists()) gendir = "/tmp"
 
 	val cards: MutableList<ICard> = mutableListOf()
-    cards.addAll(creatures.map{ (c, bmp) -> CreatureCard(c, bmp) })
 	cards.addAll(neutrals.values)
+    cards.addAll(creatures.map{ (c, bmp) -> CreatureCard(c, bmp) })
 
 	for (card in cards) {
-		prepareCard(card, font, tiles)
+		val cdi = CardDrawingInput(card, font, tiles, skills)
+		prepareCard(cdi)
 
 		val bmp = renderToBitmap(this.views)
 		val path = "${gendir}/${card.title}.png"
@@ -53,15 +55,13 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
 /**
  * @param cbmp The bitmap of [creature]
  */
-fun Stage.prepareCard(card: ICard, font: BitmapFont, tiles: Map<Tile, BitmapSlice<Bitmap>>) {
-	val cdi = CardDrawingInput(card, font, tiles)
-
+fun Stage.prepareCard(cdi: CardDrawingInput) {
 	stage.putBackground()
 	stage.putBorder(cdi)
 	stage.putBorderDecoration(cdi)
     val tiley: Double = stage.putCreatureTile(cdi)
 	val texty = stage.putTitle(cdi, tiley)
-	when (card) {
-		is CreatureCard -> stage.putStats(cdi, card, texty)
+	when (cdi.card) {
+		is CreatureCard -> stage.putStats(cdi, cdi.card, texty)
 	}
 }

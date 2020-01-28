@@ -24,7 +24,7 @@ class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>)
     override fun getColorTheme(): ColorTheme { return creature.team.color }
 }
 
-data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>)
+data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
 
 const val creatureScale = 3.0
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
