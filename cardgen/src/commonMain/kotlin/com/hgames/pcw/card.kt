@@ -69,7 +69,7 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
 
     val darkestZones: MutableList<Zone> = mutableListOf()
     val darkestRect = bottomLeft.toLine(bottomRight.x - bottomLeft.x + 1, true).growRectangleInt(-borderSize)
-    darkestZones.add(darkestRect.toZone());
+    darkestZones.add(darkestRect.toZone())
     val atopLeftCorner = darkestRect.corner(Direction.TOP_LEFT).up(1).toLine(borderSize, true).growRectangleInt(borderSize / 2)
     darkestZones.add(atopLeftCorner.toZone())
     val atopRightCorner = darkestRect.corner(Direction.TOP_RIGHT).up(2).toLine(-borderSize, true).growRectangleInt(borderSize / 2)

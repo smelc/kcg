@@ -5,5 +5,17 @@ function run() {
   $@
 }
 
-[[ -e "zzbot" ]] || { echo "zzbot must be installed: https://github.com/smelc/zzbot"; exit 1; }
+set -e
+
+if [[ -z "$ZZ_HOME" ]]
+then
+  [[ -e "zzbot" ]] || { echo "zzbot must be installed: https://github.com/smelc/zzbot"; exit 1; }
+else
+  # Update zzbot
+  declare -r HERE=`pwd`
+  run cd $ZZ_HOME
+  run stack build
+  run stack install zzbot --local-bin-path $HERE
+  run cd -
+fi
 ./zzbot test/zzbot.xml

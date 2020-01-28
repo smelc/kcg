@@ -19,10 +19,6 @@ private fun findTeam(s: String?): Team? {
     return Team.values().firstOrNull { it.name.equals(s, true) }
 }
 
-enum class Skill {
-    HitFromBack
-}
-
 data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val victoryPoints: Int, val skill: List<Skill>) {
 
     companion object {

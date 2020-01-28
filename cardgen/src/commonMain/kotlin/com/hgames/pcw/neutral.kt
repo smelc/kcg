@@ -27,14 +27,14 @@ enum class Neutral {
         }
 
         private fun <T : Bitmap> readNeutral(tiles: Map<Tile, BitmapSlice<T>>, input: Any?) : Pair<Neutral, ICard> {
-            val map: Map<*, *> = input as? Map<*, *> ?: throw IllegalStateException()
+            val map: Map<*, *> = input as Map<*, *>
 
-            val name: String = map["name"] as? String ?: throw IllegalStateException("Neutral misses field \"name\"")
+            val name: String = checkNotNull(map["name"], { "Neutral misses field \"name\"" }) as String
             val genErrMsg: (String) -> String = { x: String -> "Neutral $name misses field \"${x}\"" }
-            val tile: String = map["tile"] as? String ?: genErrMsg("tile")
-            val tileEnum: Tile = findTile(tile) ?: throw IllegalStateException("Tile named \"$tile\" not found")
-            val bmp: BitmapSlice<T> = tiles[tileEnum] as? BitmapSlice<T> ?: throw IllegalStateException("No bitmap for tile \"$tile\"")
-            val neutral: Neutral = findNeutral(tile) ?: throw IllegalStateException("Neutral named \"$tile\" not found")
+            val tile: String = checkNotNull(map["tile"], { genErrMsg("tile") }) as String
+            val tileEnum: Tile = checkNotNull(findTile(tile), { "Tile named \"$tile\" not found" })
+            val bmp: BitmapSlice<T> = checkNotNull(tiles[tileEnum], { "No bitmap for tile \"$tile\""} )
+            val neutral: Neutral = checkNotNull(findNeutral(tile), { "Neutral named \"$tile\" not found" })
 
             val card: ICard = object : ICard {
                 override val title: String get() = name
