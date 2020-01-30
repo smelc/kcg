@@ -10,6 +10,10 @@ import com.soywiz.korim.format.writeTo
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.file.std.uniVfs
 import com.hgames.pcw.twod.Tile
+import com.soywiz.korev.Key
+import com.soywiz.korge.input.keys
+import kotlin.math.max
+import kotlin.math.min
 
 suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcolor = Colors["#2b2b2b"]) {
 	val dataJson = resourcesVfs["data.json"]
@@ -28,21 +32,37 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
     cards.addAll(creatures.map{ (c, bmp) -> CreatureCard(c, bmp) })
 
 	val cdis: List<CardDrawingInput> = cards.map { CardDrawingInput(it, font, tiles, skills) }
-	cdis.forEach { drawCard(it, gendir, true) }
-}
+	cdis.forEach { drawCard(it, gendir) }
 
-suspend fun Stage.drawCard(cdi: CardDrawingInput, gendir: String, writeToDisk: Boolean) {
-	prepareCard(cdi)
-	val bmp = renderToBitmap(this.views)
-	val path = "${gendir}/${cdi.card.title}.png"
-	bmp.writeTo(path.uniVfs, PNG)
-	println("Written $path")
+	var currentCard = cdis.size - 1
+
+	keys {
+		onKeyDown {
+			val save = currentCard
+			when(it.key) {
+				Key.LEFT -> currentCard = max(0, currentCard - 1)
+				Key.RIGHT -> currentCard = min(cdis.size - 1, currentCard + 1)
+			}
+            if (save != currentCard)
+				drawCard(cdis[currentCard], null)
+		}
+	}
 }
 
 /**
- * @param cbmp The bitmap of [creature]
+ * @param gendir Where to render [cdi], or null not to render it
  */
-fun Stage.prepareCard(cdi: CardDrawingInput) {
+suspend fun Stage.drawCard(cdi: CardDrawingInput, gendir: String?) {
+	drawCard(cdi)
+	val bmp = renderToBitmap(this.views)
+    if (gendir != null) {
+		val path = "${gendir}/${cdi.card.title}.png"
+		bmp.writeTo(path.uniVfs, PNG)
+		println("Written $path")
+	}
+}
+
+fun Stage.drawCard(cdi: CardDrawingInput) {
 	stage.putBackground()
 	stage.putBorder(cdi)
 	stage.putBorderDecoration(cdi)
