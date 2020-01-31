@@ -1,14 +1,17 @@
+assets-gen
+cardgen/.gradle
+cardgen/.idea
+cardgen/build
 fonts/fontbm-0.2.1
 help
+oryx
 screenshots
+state.sqlite
 zzbot
 
 # vim
 *.swp
 
-cardgen/.gradle
-cardgen/.idea
-cardgen/build
 *.iml
 *.hprof
 *.log
