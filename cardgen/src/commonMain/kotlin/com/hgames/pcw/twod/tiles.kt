@@ -19,15 +19,15 @@ enum class Tile {
          * @param file The file data.json
          * @param bmp The bitmap of tiles.png
          */
-        suspend fun loadFromDisk(file: VfsFile, bmp: Bitmap) : Map<Tile, BitmapSlice<Bitmap>> {
+        suspend fun loadFromDisk(file: VfsFile, bmp: Bitmap): Map<Tile, BitmapSlice<Bitmap>> {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyMap()
             val topList: List<*>? = topLevel["tiles"] as? List<*>
-            val data: List<Pair<Tile, RectangleInt>> = topList?.map { x -> readTile(x)} ?: emptyList()
+            val data: List<Pair<Tile, RectangleInt>> = topList?.map { x -> readTile(x) } ?: emptyList()
             println("Read ${data.size} tiles from disk")
             return data.map { (t, r) -> Pair(t, bmp.sliceWithSize(r.x, r.y, r.width, r.height)) }.toMap()
         }
 
-        private fun readTile(input: Any?) : Pair<Tile, RectangleInt> {
+        private fun readTile(input: Any?): Pair<Tile, RectangleInt> {
             val map: Map<*, *> = input as? Map<*, *> ?: throw IllegalStateException()
 
             val name: String = map["name"] as? String ?: throw IllegalStateException("Tile misses field \"name\"")

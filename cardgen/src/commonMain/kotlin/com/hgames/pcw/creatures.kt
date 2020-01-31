@@ -1,13 +1,13 @@
 package com.hgames.pcw
 
+import com.hgames.pcw.KcgColors.HUMAN_COLORS
+import com.hgames.pcw.KcgColors.ORC_COLORS
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
 import com.soywiz.korim.bitmap.sliceWithSize
 import com.soywiz.korio.file.VfsFile
 import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
-import com.hgames.pcw.KcgColors.HUMAN_COLORS
-import com.hgames.pcw.KcgColors.ORC_COLORS
 
 enum class Team(val color: ColorTheme) {
     HUMAN(HUMAN_COLORS),
@@ -26,7 +26,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
         /**
          * @param creaturesBmp The bitmap of creatures.png
          */
-        suspend fun loadFromDisk(file: VfsFile, creaturesBmp: Bitmap) : List<Pair<Creature, BitmapSlice<Bitmap>>> {
+        suspend fun loadFromDisk(file: VfsFile, creaturesBmp: Bitmap): List<Pair<Creature, BitmapSlice<Bitmap>>> {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyList()
             val topList: List<*>? = topLevel["creatures"] as? List<*>
             val data = topList?.map { x -> readCreature(x) } ?: emptyList();
@@ -34,7 +34,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             return data.map { (c, r) -> Pair(c, creaturesBmp.sliceWithSize(r.x, r.y, r.width, r.height)) }
         }
 
-        private fun readCreature(input: Any?) : Pair<Creature, RectangleInt> {
+        private fun readCreature(input: Any?): Pair<Creature, RectangleInt> {
             val map: Map<*, *> = input as? Map<*, *> ?: throw IllegalStateException()
 
             val name: String = map["name"] as? String ?: throw IllegalStateException("Creature misses field \"name\"")
@@ -44,7 +44,8 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             val team: Team = findTeam(teamString) ?: throw IllegalStateException("No such team: $teamString")
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
-            val victoryPoints: Int = map["victory_points"] as? Int ?: throw IllegalStateException(genErrMsg("victoryPoints"))
+            val victoryPoints: Int = map["victory_points"] as? Int
+                    ?: throw IllegalStateException(genErrMsg("victoryPoints"))
             val skills: List<Skill> = readSkill(map["skills"])
 
             val x: Int = map["x"] as? Int ?: throw IllegalStateException(genErrMsg("x"))
@@ -56,7 +57,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             return Pair(Creature(name, team, hp, attack, victoryPoints, skills), rect)
         }
 
-        private fun readSkill(input: Any?) : List<Skill> {
+        private fun readSkill(input: Any?): List<Skill> {
             return emptyList()
         }
 

@@ -1,5 +1,8 @@
 package com.hgames.pcw
 
+import Direction
+import com.hgames.pcw.twod.*
+import com.hgames.pcw.twod.Zone.Companion.solidZones
 import com.soywiz.korge.view.*
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
@@ -7,8 +10,6 @@ import com.soywiz.korim.color.Colors
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.font.BitmapFont
 import com.soywiz.korma.geom.RectangleInt
-import com.hgames.pcw.twod.*
-import com.hgames.pcw.twod.Zone.Companion.solidZones
 
 interface ICard {
 
@@ -20,8 +21,13 @@ interface ICard {
 
 class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>) : ICard {
     override val title: String = creature.name
-    override fun getBitmap(): BitmapSlice<Bitmap> { return bmp }
-    override fun getColorTheme(): ColorTheme { return creature.team.color }
+    override fun getBitmap(): BitmapSlice<Bitmap> {
+        return bmp
+    }
+
+    override fun getColorTheme(): ColorTheme {
+        return creature.team.color
+    }
 }
 
 data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
@@ -127,7 +133,7 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     val leftMargin = cdi.font.fontSize
 
     /* Hitpoints */
-    val hpText = text (card.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
+    val hpText = text(card.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
         position(leftMargin, hearty)
     }
     image(cdi.tiles[Tile.HEART] ?: error("heart tile not found")) {
@@ -138,7 +144,7 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
 
     /* Attack */
     val attacky = hearty + cdi.font.fontSize
-    val attackText = text (card.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
+    val attackText = text(card.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
         position(leftMargin, attacky)
     }
     image(cdi.tiles[Tile.SWORD] ?: error("sword tile not found")) {

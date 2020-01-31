@@ -18,7 +18,7 @@ import com.soywiz.korma.geom.RectangleInt
 @KorgeCandidate
 interface Zone {
 
-    fun get() : Iterable<PointInt>
+    fun get(): Iterable<PointInt>
     fun toList(): List<PointInt> = get().toList()
 
     companion object {
@@ -27,7 +27,7 @@ interface Zone {
             z.get().forEach { solidPointInt(it, color) }
         }
 
-        fun Stage.solidZones(zones:  Iterable<Zone>, color: RGBA) {
+        fun Stage.solidZones(zones: Iterable<Zone>, color: RGBA) {
             zones.forEach { solidZone(it, color) }
         }
     }
@@ -41,16 +41,26 @@ fun RectangleInt.toZone(): Zone {
             l.add(PointInt(px, py))
     }
     val immutList: List<PointInt> = l.toList()
-    return object: Zone {
-        override fun get(): Iterable<PointInt> { return toList() }
-        override fun toList(): List<PointInt> { return immutList }
+    return object : Zone {
+        override fun get(): Iterable<PointInt> {
+            return toList()
+        }
+
+        override fun toList(): List<PointInt> {
+            return immutList
+        }
     }
 }
 
 fun PointInt.toZone(): Zone {
     val l = listOf(this)
-    return object: Zone {
-        override fun get(): Iterable<PointInt> { return toList() }
-        override fun toList(): List<PointInt> { return l }
+    return object : Zone {
+        override fun get(): Iterable<PointInt> {
+            return toList()
+        }
+
+        override fun toList(): List<PointInt> {
+            return l
+        }
     }
 }

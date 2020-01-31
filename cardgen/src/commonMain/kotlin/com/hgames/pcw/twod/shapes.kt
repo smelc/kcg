@@ -8,17 +8,20 @@ import com.soywiz.korge.view.solidRect
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korma.geom.PointInt
 import com.soywiz.korma.geom.RectangleInt
-import kotlin.math.*
+import kotlin.math.max
 
 @KorgeCandidate
 data class LineInt(val x: Int, val y: Int, val length: Int, val horizontalOrVertical: Boolean) : Zone {
 
     fun toRectangleInt(): RectangleInt {
         return if (horizontalOrVertical) RectangleInt(x, y, length, 1)
-               else RectangleInt(x, y, 1, length)
+        else RectangleInt(x, y, 1, length)
     }
 
-    fun extend(len: Int): LineInt { return LineInt(x, y, length + len, horizontalOrVertical) }
+    fun extend(len: Int): LineInt {
+        return LineInt(x, y, length + len, horizontalOrVertical)
+    }
+
     fun moveByX(amount: Int): LineInt = LineInt(x + amount, y, length, horizontalOrVertical)
     fun moveByY(amount: Int): LineInt = LineInt(x, y + amount, length, horizontalOrVertical)
     val shrink: LineInt by lazy { LineInt(x, y, max(0, length - 1), horizontalOrVertical) }
@@ -48,20 +51,43 @@ data class LineInt(val x: Int, val y: Int, val length: Int, val horizontalOrVert
 @KorgeCandidate
 fun PointInt.toLine(len: Int, horizontalOrVertical: Boolean): LineInt {
     if (len > 0) return LineInt(x, y, len, horizontalOrVertical)
-    else if (horizontalOrVertical) return LineInt(x + 1 +  len, y, -len, horizontalOrVertical)
+    else if (horizontalOrVertical) return LineInt(x + 1 + len, y, -len, horizontalOrVertical)
     else return LineInt(x, y + 1 + len, -len, horizontalOrVertical)
 }
 
 @KorgeCandidate
-fun PointInt.plusx(plus: Int): PointInt { return PointInt(x + plus, y) }
-fun PointInt.left(): PointInt { return plusx(-1) }
-fun PointInt.right(): PointInt { return plusx(1) }
+fun PointInt.plusx(plus: Int): PointInt {
+    return PointInt(x + plus, y)
+}
+
+fun PointInt.left(): PointInt {
+    return plusx(-1)
+}
+
+fun PointInt.right(): PointInt {
+    return plusx(1)
+}
+
 @KorgeCandidate
-fun PointInt.plusy(plus: Int): PointInt { return PointInt(x, y + plus) }
-fun PointInt.up(): PointInt { return plusy(-1) }
-fun PointInt.up(amount: Int): PointInt { return plusy(-amount) }
-fun PointInt.down(): PointInt { return plusy(1) }
-fun PointInt.down(amount: Int): PointInt { return plusy(amount) }
+fun PointInt.plusy(plus: Int): PointInt {
+    return PointInt(x, y + plus)
+}
+
+fun PointInt.up(): PointInt {
+    return plusy(-1)
+}
+
+fun PointInt.up(amount: Int): PointInt {
+    return plusy(-amount)
+}
+
+fun PointInt.down(): PointInt {
+    return plusy(1)
+}
+
+fun PointInt.down(amount: Int): PointInt {
+    return plusy(amount)
+}
 
 fun Container.solidInnerBorders(r: RectangleInt, color: RGBA) {
     r.innerBorders().forEach { this.solidLineInt(it, color) }
@@ -73,7 +99,7 @@ fun Container.solidLineInt(l: LineInt, color: RGBA) {
 }
 
 @KorgeCandidate
-fun Container.solidPointInt(p : PointInt, color: RGBA) {
+fun Container.solidPointInt(p: PointInt, color: RGBA) {
     solidRect(1, 1, color) { position(p.x, p.y) }
 }
 
@@ -84,7 +110,7 @@ fun Container.solidRectangleInt(r: RectangleInt, color: RGBA) {
 
 @KorgeCandidate
 fun RectangleInt.shrink(): RectangleInt {
-    return RectangleInt.invoke(x + 1, y + 1, max(0, width -2), max(0, height - 2))
+    return RectangleInt.invoke(x + 1, y + 1, max(0, width - 2), max(0, height - 2))
 }
 
 @KorgeCandidate
@@ -95,12 +121,15 @@ fun RectangleInt.corners(): List<PointInt> {
 fun RectangleInt.moveByX(shift: Int): RectangleInt {
     return RectangleInt(x + shift, y, width, height)
 }
+
 fun RectangleInt.moveByY(shift: Int): RectangleInt {
     return RectangleInt(x, y + shift, width, height)
 }
+
 fun RectangleInt.down(): RectangleInt {
     return moveByY(1)
 }
+
 fun RectangleInt.up(): RectangleInt {
     return moveByY(-1)
 }
@@ -109,10 +138,10 @@ fun RectangleInt.innerBorders(): List<LineInt> {
     val h = height
     val w = width
     return listOf<LineInt>(
-            LineInt(x+1, y+1, max(0, w-2), true),   // top horizontal line
-            LineInt(x+1, y+h-2, max(0, w-2), true), // bottom horizontal line
-            LineInt(x+1, y+1, max(0, h-2), false),  // left vertical line
-            LineInt(x+w-2, y+1, max(0, h-2), false) // right vertical line
+            LineInt(x + 1, y + 1, max(0, w - 2), true),   // top horizontal line
+            LineInt(x + 1, y + h - 2, max(0, w - 2), true), // bottom horizontal line
+            LineInt(x + 1, y + 1, max(0, h - 2), false),  // left vertical line
+            LineInt(x + w - 2, y + 1, max(0, h - 2), false) // right vertical line
     )
 }
 
@@ -132,5 +161,5 @@ fun RectangleInt.corner(dir: Direction): PointInt {
         Direction.TOP_LEFT -> PointInt(0, 0)
         Direction.TOP_RIGHT -> PointInt(width - 1, 0)
     }
-    return PointInt(x + offset.x,  y + offset.y)
+    return PointInt(x + offset.x, y + offset.y)
 }

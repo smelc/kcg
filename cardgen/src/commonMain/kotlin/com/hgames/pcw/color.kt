@@ -32,4 +32,6 @@ object KcgColors {
             opaque(178, 175, 175)) // lightest
 }
 
-fun opaque(r: Int, g: Int, b: Int) : RGBA { return RGBA.unclamped(r, g, b, 255) }
+fun opaque(r: Int, g: Int, b: Int): RGBA {
+    return RGBA.unclamped(r, g, b, 255)
+}
