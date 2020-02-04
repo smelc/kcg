@@ -23,6 +23,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
     val skills = Skill.loadFromDisk(dataJson)
 
     val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
+    val itfont = resourcesVfs["romulus_medium_12.fnt"].readBitmapFont()
 
     var gendir = "/home/churlin/PERSONNEL/kcg/assets-gen"
     if (!gendir.uniVfs.exists()) gendir = "/tmp"
@@ -31,7 +32,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
     cards.addAll(neutrals.values)
     cards.addAll(creatures.map { (c, bmp) -> CreatureCard(c, bmp) })
 
-    val cdis: List<CardDrawingInput> = cards.map { CardDrawingInput(it, font, tiles, skills) }
+    val cdis: List<CardDrawingInput> = cards.map { CardDrawingInput(it, font, itfont, tiles, skills) }
     cdis.forEach { drawCard(it, gendir) }
 
     var currentCard = cdis.size - 1

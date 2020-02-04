@@ -30,7 +30,7 @@ class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>)
     }
 }
 
-data class CardDrawingInput(val card: ICard, val font: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
+data class CardDrawingInput(val card: ICard, val font: BitmapFont, val itfont: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
 
 const val creatureScale = 3.0
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
@@ -155,6 +155,6 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     var skilly = attacky + cdi.font.fontSize
     for (skill in card.creature.skills) {
         val found: SkillData = cdi.skills.find { it.skill == skill } ?: throw IllegalStateException("SkillData not found: $skill")
-        putJustifiedText(found.text, cdi.font, Colors.BLACK, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
+        putJustifiedText(found.text, cdi.itfont, Colors.BLACK, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
     }
 }
