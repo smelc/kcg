@@ -152,4 +152,9 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
         scale = creatureScale - 1
         smoothing = false
     }
+    var skilly = attacky + cdi.font.fontSize
+    for (skill in card.creature.skills) {
+        val found: SkillData = cdi.skills.find { it.skill == skill } ?: throw IllegalStateException("SkillData not found: $skill")
+        putJustifiedText(found.text, cdi.font, Colors.BLACK, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
+    }
 }

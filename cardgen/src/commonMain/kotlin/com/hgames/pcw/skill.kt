@@ -36,7 +36,7 @@ enum class Skill {
 
 data class SkillData(val skill: Skill, val text: String)
 
-private fun findSkill(s: String?): Skill? {
+fun findSkill(s: String?): Skill? {
     if (s == null) return null
     return Skill.values().firstOrNull { it.name.equals(s, true) }
 }

@@ -19,7 +19,7 @@ private fun findTeam(s: String?): Team? {
     return Team.values().firstOrNull { it.name.equals(s, true) }
 }
 
-data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val victoryPoints: Int, val skill: List<Skill>) {
+data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val victoryPoints: Int, val skills: List<Skill>) {
 
     companion object {
 
@@ -58,7 +58,16 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
         }
 
         private fun readSkill(input: Any?): List<Skill> {
-            return emptyList()
+            if (input == null) return emptyList()
+            val list: List<*> = input as? List<*> ?: throw IllegalStateException("\"skills\" is not mapped to a list, found: $input")
+            if (list.isNullOrEmpty()) return emptyList()
+            val result: MutableList<Skill> = mutableListOf()
+            for (member in list) {
+                val string = member as? String ?: throw IllegalStateException("Member of \"skills\" list is not a string: $member")
+                val skill: Skill = findSkill(member) ?: throw IllegalStateException("skill not found: $string")
+                result.add(skill)
+            }
+            return result
         }
 
     }
