@@ -8,8 +8,11 @@
     <!-- json -->
     <shell command="which $[jsonlint]"/>
     <shell command="$[jsonlint] cardgen/src/commonMain/resources/data.json"/>
-    <!-- build -->
+    <!-- build: JVM -->
     <shell command="$[gradle] jvmMainClasses" workdir="cardgen"/>
     <shell command="$[gradle] jvmTestClasses" workdir="cardgen"/>
+    <!-- build: Javascript -->
+    <shell command="$[gradle] jsMainClasses" workdir="cardgen"/>
+    <shell command="$[gradle] jsTest"        workdir="cardgen"/>
   </builder>
 </config>
