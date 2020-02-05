@@ -1,5 +1,8 @@
 import com.hgames.pcw.*
+import com.hgames.pcw.twod.Tile
+import com.soywiz.korev.Key
 import com.soywiz.korge.Korge
+import com.soywiz.korge.input.keys
 import com.soywiz.korge.view.Stage
 import com.soywiz.korge.view.renderToBitmap
 import com.soywiz.korim.color.Colors
@@ -9,9 +12,6 @@ import com.soywiz.korim.format.readBitmap
 import com.soywiz.korim.format.writeTo
 import com.soywiz.korio.file.std.resourcesVfs
 import com.soywiz.korio.file.std.uniVfs
-import com.hgames.pcw.twod.Tile
-import com.soywiz.korev.Key
-import com.soywiz.korge.input.keys
 import kotlin.math.max
 import kotlin.math.min
 
@@ -23,7 +23,7 @@ suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcol
     val skills = Skill.loadFromDisk(dataJson)
 
     val font = resourcesVfs["romulus_medium_24.fnt"].readBitmapFont()
-    val itfont = resourcesVfs["romulus_medium_12.fnt"].readBitmapFont()
+    val itfont = resourcesVfs["romulus_medium_14.fnt"].readBitmapFont()
 
     var gendir = "/home/churlin/PERSONNEL/kcg/assets-gen"
     if (!gendir.uniVfs.exists()) gendir = "/tmp"

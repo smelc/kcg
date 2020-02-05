@@ -131,6 +131,7 @@ fun Stage.putTitle(cdi: CardDrawingInput, tileboty: Double): Double {
 fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     val hearty = texty + cdi.font.fontSize * 1.5
     val leftMargin = cdi.font.fontSize
+    val ySeparator = cdi.font.fontSize * 1.3
 
     /* Hitpoints */
     val hpText = text(card.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
@@ -143,7 +144,7 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     }
 
     /* Attack */
-    val attacky = hearty + cdi.font.fontSize
+    val attacky = hearty + ySeparator
     val attackText = text(card.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
         position(leftMargin, attacky)
     }
@@ -152,9 +153,17 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
         scale = creatureScale - 1
         smoothing = false
     }
-    var skilly = attacky + cdi.font.fontSize
+    var skilly = attacky + ySeparator
+
+    /* Skills */
+    // val gold: RGBA = opaque(197, 195, 44)
+    val gold: RGBA = opaque(164, 163, 30)
+    val grey: RGBA = opaqueGrey(1118)
     for (skill in card.creature.skills) {
-        val found: SkillData = cdi.skills.find { it.skill == skill } ?: throw IllegalStateException("SkillData not found: $skill")
-        putJustifiedText(found.text, cdi.itfont, Colors.BLACK, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
+        val found: SkillData = cdi.skills.find { it.skill == skill }
+                ?: throw IllegalStateException("SkillData not found: $skill")
+        val bucket1 = TextBucket(found.text, cdi.font, gold)
+        val bucket2 = TextBucket("(" + found.desc + ")", cdi.itfont, grey)
+        putJustifiedText2(bucket1, bucket2, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
     }
 }

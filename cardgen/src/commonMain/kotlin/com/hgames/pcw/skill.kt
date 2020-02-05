@@ -28,13 +28,14 @@ enum class Skill {
             val genErrMsg: (String) -> String = { x: String -> "Skill $name misses field \"${x}\"" }
             val skill: Skill = checkNotNull(findSkill(name), { "Skill not found: \"$name\"" })
             val text: String = checkNotNull(map["text"], { genErrMsg("text") }) as String
+            val desc: String = checkNotNull(map["description"], { genErrMsg("description") }) as String
 
-            return SkillData(skill, text)
+            return SkillData(skill, text, desc)
         }
     }
 }
 
-data class SkillData(val skill: Skill, val text: String)
+data class SkillData(val skill: Skill, val text: String, val desc: String)
 
 fun findSkill(s: String?): Skill? {
     if (s == null) return null

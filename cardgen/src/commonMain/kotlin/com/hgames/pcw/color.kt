@@ -35,3 +35,6 @@ object KcgColors {
 fun opaque(r: Int, g: Int, b: Int): RGBA {
     return RGBA.unclamped(r, g, b, 255)
 }
+fun opaqueGrey(i: Int): RGBA {
+    return RGBA.unclamped(i, i, i, 255)
+}

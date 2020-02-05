@@ -15,7 +15,7 @@
     { "name":"green_potion", "x":48, "y":0 }
   ],
   "skills": [
-    { "name":"hitfromback", "text":"hits 2 cells away when in the back line"},
-    { "name":"ranged", "text":"hits any enemy in its column"}
+    { "name":"hitfromback", "text":"back hit", "description":"hits 2 cells away when in the back line"},
+    { "name":"ranged", "text":"ranged", "description":"hits any enemy in its column"}
   ]
 }

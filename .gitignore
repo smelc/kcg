@@ -3,6 +3,7 @@ cardgen/.gradle
 cardgen/.idea
 cardgen/build
 fonts/fontbm-0.2.1
+fonts/FontBuilder
 help
 oryx
 screenshots
