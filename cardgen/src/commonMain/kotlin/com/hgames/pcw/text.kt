@@ -6,6 +6,15 @@ import com.soywiz.korge.view.text
 import com.soywiz.korim.color.RGBA
 import com.soywiz.korim.font.BitmapFont
 
+/**
+ * @param text The text to show, will get split on spaces
+ * @param font The font to draw [text]
+ * @param color The color to draw [text]
+ * @param x Where to draw [text]
+ * @param y Where to draw [text]
+ * @param width The maximum width allowed to draw [text]. If the text would go over this width; a new line
+ *              is inserted and drawing continue below.
+ */
 fun Stage.putJustifiedText(text: String, font: BitmapFont, color: RGBA, x: Double, y: Double, width: Double) {
     val split = text.split(" ")
     var yoffset = 0

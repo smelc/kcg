@@ -15,6 +15,7 @@ import com.soywiz.korio.file.std.uniVfs
 import kotlin.math.max
 import kotlin.math.min
 
+// 216, 324 = (9 * 24, 13 * 24)
 suspend fun main() = Korge(width = (24 * 9), height = ((24 * 4) + 12) * 3, bgcolor = Colors["#2b2b2b"]) {
     val dataJson = resourcesVfs["data.json"]
     val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
