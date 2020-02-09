@@ -1,6 +1,7 @@
 package com.hgames.pcw
 
 import Direction
+import GLOBAL_SCALE
 import com.hgames.pcw.twod.*
 import com.hgames.pcw.twod.Zone.Companion.solidZones
 import com.soywiz.korge.view.*
@@ -32,7 +33,6 @@ class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>)
 
 data class CardDrawingInput(val card: ICard, val font: BitmapFont, val itfont: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
 
-const val creatureScale = 3.0
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
 val borderSize = 5
 
@@ -100,11 +100,11 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
 /** @return The tile's bottom y */
 fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
     val bmp = cdi.card.getBitmap()
-    val imgx = (width - (bmp.width * creatureScale)) / 2
-    val imgy = (height - (bmp.height * creatureScale)) / 8
+    val imgx = (width - (bmp.width * GLOBAL_SCALE)) / 2
+    val imgy = (height - (bmp.height * GLOBAL_SCALE)) / 8
     val img = image(bmp) {
         position(imgx, imgy)
-        scale = creatureScale
+        scale = GLOBAL_SCALE.toDouble()
         smoothing = false
     }
     return imgy + img.height
@@ -139,7 +139,7 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     }
     image(cdi.tiles[Tile.HEART] ?: error("heart tile not found")) {
         position(leftMargin + hpText.textBounds.width, hearty)
-        scale = creatureScale - 1
+        scale = GLOBAL_SCALE.toDouble() - 1
         smoothing = false
     }
 
@@ -150,7 +150,7 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     }
     image(cdi.tiles[Tile.SWORD] ?: error("sword tile not found")) {
         position(leftMargin + attackText.textBounds.width, attacky)
-        scale = creatureScale - 1
+        scale = GLOBAL_SCALE.toDouble() - 1
         smoothing = false
     }
     var skilly = attacky + ySeparator
