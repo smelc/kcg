@@ -1,8 +1,8 @@
 {
   "creatures":[
-    { "team":"human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":24, "y":0 },
+    { "team":"human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":72, "y":0 },
     { "team":"human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
-    { "team":"human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["ranged"], "x":48, "y":0 }
+    { "team":"human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["ranged"], "x":144, "y":0 }
   ],
   "neutral": [
     { "name": "health" ,"tile":"red_potion", "text": "Heals 1HP" },
@@ -10,9 +10,9 @@
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
-    { "name":"sword", "x":16, "y":0 },
-    { "name":"red_potion", "x":32, "y":0 },
-    { "name":"green_potion", "x":48, "y":0 }
+    { "name":"sword", "x":48, "y":0 },
+    { "name":"red_potion", "x":96, "y":0 },
+    { "name":"green_potion", "x":144, "y":0 }
   ],
   "skills": [
     { "name":"hitfromback", "text":"back hit", "description":"hits 2 cells away when in the back line"},

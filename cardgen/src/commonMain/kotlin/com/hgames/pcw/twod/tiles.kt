@@ -36,8 +36,8 @@ enum class Tile {
 
             val x: Int = map["x"] as? Int ?: throw IllegalStateException(genErrMsg("x"))
             val y: Int = map["y"] as? Int ?: throw IllegalStateException(genErrMsg("y"))
-            val w: Int = map["w"] as? Int ?: 16 // default
-            val h: Int = map["h"] as? Int ?: 16 // default
+            val w: Int = map["w"] as? Int ?: 48 // default
+            val h: Int = map["h"] as? Int ?: 48 // default
             val rect = RectangleInt(x, y, w, h)
 
             return Pair(tile, rect)

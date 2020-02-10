@@ -15,14 +15,12 @@ import com.soywiz.korio.file.std.uniVfs
 import kotlin.math.max
 import kotlin.math.min
 
-const val GLOBAL_SCALE : Int = 3
-
 // (24 * 3) * 3 = 72 * 3 = 216
 // (24 * 4) * 4 = 96 * 3 = 288
-suspend fun main() = Korge(width = (24 * 3) * GLOBAL_SCALE, height = (24 * 4) * GLOBAL_SCALE, bgcolor = Colors["#2b2b2b"]) {
+suspend fun main() = Korge(width = 24 * 9, height = 24 * 12, bgcolor = Colors["#2b2b2b"]) {
     val dataJson = resourcesVfs["data.json"]
-    val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16.png"].readBitmap())
-    val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24.png"].readBitmap())
+    val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16_x3.png"].readBitmap())
+    val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24_x3.png"].readBitmap())
     val neutrals = Neutral.loadFromDisk(dataJson, tiles)
     val skills = Skill.loadFromDisk(dataJson)
 

@@ -50,8 +50,8 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
 
             val x: Int = map["x"] as? Int ?: throw IllegalStateException(genErrMsg("x"))
             val y: Int = map["y"] as? Int ?: throw IllegalStateException(genErrMsg("y"))
-            val w: Int = map["w"] as? Int ?: 24 // default
-            val h: Int = map["h"] as? Int ?: 24 // default
+            val w: Int = map["w"] as? Int ?: 72 // default
+            val h: Int = map["h"] as? Int ?: 72 // default
             val rect = RectangleInt(x, y, w, h)
 
             return Pair(Creature(name, team, hp, attack, victoryPoints, skills), rect)
