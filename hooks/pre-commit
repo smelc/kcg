@@ -7,15 +7,19 @@ function run() {
 
 set -e
 
-if [[ -z "$ZZ_HOME" ]]
+if [[ -z "$ZZ_HOME" && ! -e "zzbot" ]]; then
+  echo "Either the zzbot executable must be in `pwd` or ZZ_HOME must be specified"
+  echo "zzbot is available at https://github.com/smelc/zzbot"
+  exit 1
+fi
+
+if [[ ! -z "$ZZ_HOME" ]]
 then
-  [[ -e "zzbot" ]] || { echo "zzbot must be installed: https://github.com/smelc/zzbot"; exit 1; }
-else
-  # Update zzbot
+  # zzbot's repository is locally available, update it
   declare -r HERE=`pwd`
   run cd $ZZ_HOME
   run stack build
   run stack install zzbot --local-bin-path $HERE
   run cd -
 fi
-./zzbot test/zzbot.xml
+run ./zzbot test/zzbot.xml
