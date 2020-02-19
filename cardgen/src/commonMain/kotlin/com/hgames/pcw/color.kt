@@ -22,6 +22,14 @@ object KcgColors {
             Colors.RED,
             Colors.RED,
             Colors.RED)
+    val UNDEAD_COLORS = ColorTheme(
+            opaque(78, 4, 118),
+            opaque(96, 25, 135),
+            opaque(115, 44, 154),
+            opaque(136, 65, 174),
+            opaque(160, 88, 199),
+            opaque(190, 116, 230),
+            opaque(208, 130, 249))
     val NEUTRAL_COLORS = ColorTheme(
             opaque(110, 107, 107), // darkesT
             opaque(123, 120, 120), // darkest

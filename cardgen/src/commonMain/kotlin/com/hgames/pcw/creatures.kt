@@ -2,6 +2,7 @@ package com.hgames.pcw
 
 import com.hgames.pcw.KcgColors.HUMAN_COLORS
 import com.hgames.pcw.KcgColors.ORC_COLORS
+import com.hgames.pcw.KcgColors.UNDEAD_COLORS
 import com.soywiz.korim.bitmap.Bitmap
 import com.soywiz.korim.bitmap.BitmapSlice
 import com.soywiz.korim.bitmap.sliceWithSize
@@ -11,7 +12,8 @@ import com.soywiz.korma.geom.RectangleInt
 
 enum class Team(val color: ColorTheme) {
     HUMAN(HUMAN_COLORS),
-    ORC(ORC_COLORS)
+    ORC(ORC_COLORS),
+    UNDEAD(UNDEAD_COLORS)
 }
 
 private fun findTeam(s: String?): Team? {
