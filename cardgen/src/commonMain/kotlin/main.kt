@@ -19,7 +19,7 @@ import kotlin.math.min
 // (24 * 4) * 4 = 96 * 3 = 288
 suspend fun main() = Korge(width = 24 * 9, height = 24 * 12, bgcolor = Colors["#2b2b2b"]) {
     val dataJson = resourcesVfs["data.json"]
-    val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16_x3.png"].readBitmap())
+    val tiles = Tile.loadFromDisk(dataJson, resourcesVfs["16x16_x2.png"].readBitmap())
     val creatures = Creature.loadFromDisk(dataJson, resourcesVfs["24x24_x3.png"].readBitmap())
     val neutrals = Neutral.loadFromDisk(dataJson, tiles)
     val skills = Skill.loadFromDisk(dataJson)

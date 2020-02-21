@@ -11,9 +11,9 @@
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
-    { "name":"sword", "x":48, "y":0 },
-    { "name":"red_potion", "x":96, "y":0 },
-    { "name":"green_potion", "x":144, "y":0 }
+    { "name":"sword", "x":32, "y":0 },
+    { "name":"red_potion", "x":64, "y":0 },
+    { "name":"green_potion", "x":96, "y":0 }
   ],
   "skills": [
     { "name":"hitfromback", "text":"back hit", "description":"hits 2 cells away when in the back line"},
