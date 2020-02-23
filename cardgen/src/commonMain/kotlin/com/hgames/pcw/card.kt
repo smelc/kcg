@@ -127,29 +127,9 @@ fun Stage.putTitle(cdi: CardDrawingInput, tileboty: Double): Double {
  * @param texty The creature's name y
  */
 fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
-    val hearty = texty + cdi.font.fontSize * 1.5
     val leftMargin = cdi.font.fontSize
-    val ySeparator = cdi.font.fontSize * 1.3
-
-    /* Hitpoints */
-    val hpText = text(card.creature.hps.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
-        position(leftMargin, hearty)
-    }
-    image(cdi.tiles[Tile.HEART] ?: error("heart tile not found")) {
-        position(leftMargin + hpText.textBounds.width, hearty)
-        smoothing = false
-    }
-
-    /* Attack */
-    val attacky = hearty + ySeparator
-    val attackText = text(card.creature.attack.toString(), font = cdi.font, textSize = cdi.font.fontSize.toDouble(), color = Colors.BLACK) {
-        position(leftMargin, attacky)
-    }
-    image(cdi.tiles[Tile.SWORD] ?: error("sword tile not found")) {
-        position(leftMargin + attackText.textBounds.width, attacky)
-        smoothing = false
-    }
-    var skilly = attacky + ySeparator
+    val statsLineY = texty + cdi.font.fontSize * 1.5
+    val skilly = putStatsLine(cdi, card, leftMargin, statsLineY)
 
     /* Skills */
     // val gold: RGBA = opaque(197, 195, 44)
@@ -162,4 +142,37 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
         val bucket2 = TextBucket("(" + found.desc + ")", cdi.itfont, grey)
         putJustifiedText2(bucket1, bucket2, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
     }
+}
+
+/**
+ * @param xbase Where to start displaying
+ * @param ybase Where to start displaying
+ * @return The y for the content after the content drawn by this call
+ */
+fun Stage.putStatsLine(cdi: CardDrawingInput, card: CreatureCard, xbase: Int, ybase: Double): Double {
+    /* Hitpoints */
+    val hpText = text(card.creature.hps.toString(),
+            font = cdi.font, textSize = cdi.font.fontSize.toDouble(),
+            color = opaque(254, 1, 1)) {
+        position(xbase, ybase)
+    }
+    val hpImg = image(cdi.tiles[Tile.HEART] ?: error("heart tile not found")) {
+        position(xbase + hpText.textBounds.width, ybase)
+        smoothing = false
+    }
+
+    /* Attack */
+    val attackx = hpImg.x + hpImg.width + cdi.font.measureWidth(" ")
+    val attackText = text(card.creature.attack.toString(),
+            font = cdi.font, textSize = cdi.font.fontSize.toDouble(),
+            color = opaque(66, 57, 23)) {
+        position(attackx, ybase)
+    }
+    image(cdi.tiles[Tile.SWORD] ?: error("sword tile not found")) {
+        position(attackx + attackText.textBounds.width, ybase)
+        smoothing = false
+    }
+
+    val ySeparator = cdi.font.fontSize * 1.3
+    return ybase + ySeparator
 }
