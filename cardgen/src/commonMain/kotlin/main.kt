@@ -73,5 +73,6 @@ fun Stage.drawCard(cdi: CardDrawingInput) {
     val texty = stage.putTitle(cdi, tiley)
     when (cdi.card) {
         is CreatureCard -> stage.putStats(cdi, cdi.card, texty)
+        is NeutralCard -> stage.putJustifiedText(cdi, cdi.card.text, texty + getVerticalSpaceAfterTitle(cdi))
     }
 }

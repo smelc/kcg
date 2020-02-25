@@ -1,6 +1,7 @@
 package com.hgames.pcw
 
 import Direction
+import com.hgames.pcw.KcgColors.NEUTRAL_COLORS
 import com.hgames.pcw.twod.*
 import com.hgames.pcw.twod.Zone.Companion.solidZones
 import com.soywiz.korge.view.*
@@ -33,7 +34,11 @@ class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>)
 data class CardDrawingInput(val card: ICard, val font: BitmapFont, val itfont: BitmapFont, val tiles: Map<Tile, BitmapSlice<Bitmap>>, val skills: List<SkillData>)
 
 val backgroundColor = RGBA.unclamped(247, 232, 150, 255)
-val borderSize = 5
+const val borderSize = 5
+
+fun getVerticalSpaceAfterTitle(cdi: CardDrawingInput): Double {
+    return cdi.font.fontSize * 1.5
+}
 
 fun Stage.putBackground() {
     solidRect(width, height, backgroundColor)
@@ -123,12 +128,17 @@ fun Stage.putTitle(cdi: CardDrawingInput, tileboty: Double): Double {
     return texty
 }
 
+fun Stage.putJustifiedText(cdi: CardDrawingInput, text: String, basey: Double) {
+    val leftMargin = getLeftMargin(cdi).toDouble()
+   putJustifiedText(text, cdi.font, NEUTRAL_COLORS.darkesT, leftMargin, basey,  (width - leftMargin * 2))
+}
+
 /**
  * @param texty The creature's name y
  */
 fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
-    val leftMargin = cdi.font.fontSize
-    val statsLineY = texty + cdi.font.fontSize * 1.5
+    val leftMargin = getLeftMargin(cdi)
+    val statsLineY = texty + getVerticalSpaceAfterTitle(cdi)
     val skilly = putStatsLine(cdi, card, leftMargin, statsLineY)
 
     /* Skills */
@@ -175,4 +185,8 @@ fun Stage.putStatsLine(cdi: CardDrawingInput, card: CreatureCard, xbase: Int, yb
 
     val ySeparator = cdi.font.fontSize * 1.3
     return ybase + ySeparator
+}
+
+private fun getLeftMargin(cdi: CardDrawingInput): Int {
+    return cdi.font.fontSize
 }

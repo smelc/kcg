@@ -6,7 +6,7 @@
     { "team":"undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 }
   ],
   "neutral": [
-    { "name": "health" ,"tile":"red_potion", "text": "Heals 1HP" },
+    { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },
     { "name": "life", "tile":"green_potion", "text": "Restores all HP" }
   ],
   "tiles": [

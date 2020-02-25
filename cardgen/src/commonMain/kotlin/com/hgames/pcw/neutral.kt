@@ -35,8 +35,9 @@ enum class Neutral {
             val tileEnum: Tile = checkNotNull(findTile(tile), { "Tile named \"$tile\" not found" })
             val bmp: BitmapSlice<T> = checkNotNull(tiles[tileEnum], { "No bitmap for tile \"$tile\"" })
             val neutral: Neutral = checkNotNull(findNeutral(tile), { "Neutral named \"$tile\" not found" })
+            val text: String = checkNotNull(map["text"], { genErrMsg("text") }) as String
 
-            val card: ICard = object : ICard {
+            val card: ICard = object : NeutralCard(text) {
                 override val title: String get() = name
                 override fun getBitmap(): BitmapSlice<Bitmap> {
                     return bmp
@@ -51,6 +52,8 @@ enum class Neutral {
         }
     }
 }
+
+abstract class NeutralCard(val text: String) : ICard {}
 
 private fun findNeutral(s: String?): Neutral? {
     if (s == null) return null
