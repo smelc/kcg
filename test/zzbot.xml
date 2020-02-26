@@ -14,5 +14,8 @@
     <!-- build: Javascript -->
     <shell command="$[gradle] jsMainClasses" workdir="cardgen"/>
     <shell command="$[gradle] jsTest"        workdir="cardgen"/>
+    <!-- build: ai -->
+    <shell command="stack build"  workdir="ai"/>
+    <shell command="stack run ai" workdir="ai"/>
   </builder>
 </config>
