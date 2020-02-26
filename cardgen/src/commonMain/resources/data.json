@@ -3,7 +3,8 @@
     { "team":"human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["hitfromback"], "x":72, "y":0 },
     { "team":"human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
     { "team":"human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["ranged"], "x":144, "y":0 },
-    { "team":"undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 }
+    { "team":"undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
+    { "team":"undead", "name":"vampire", "hp":3, "attack":3, "victory_points":1, "x":72, "y":72 }
   ],
   "neutral": [
     { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },
