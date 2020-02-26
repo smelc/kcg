@@ -1,0 +1,49 @@
+name:                ai
+version:             0.1.0.0
+github:              "smelc/kcg/ai"
+license:             MIT
+author:              "Clément Hurlin"
+maintainer:          "hgamesdeveloper@gmail.com"
+copyright:           "2020 Clément Hurlin"
+
+extra-source-files:
+- README.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/smelc/kcg#readme>
+
+dependencies:
+- aeson
+- base >= 4.7 && < 5
+- bytestring
+
+library:
+  source-dirs: src
+
+executables:
+  ai-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ai
+
+tests:
+  ai-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ai

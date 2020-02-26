@@ -46,7 +46,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             val team: Team = findTeam(teamString) ?: throw IllegalStateException("No such team: $teamString")
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
-            val victoryPoints: Int = map["victory_points"] as? Int
+            val victoryPoints: Int = map["victoryPoints"] as? Int
                     ?: throw IllegalStateException(genErrMsg("victoryPoints"))
             val skills: List<Skill> = readSkill(map["skills"])
 

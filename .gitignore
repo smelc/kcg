@@ -1,3 +1,6 @@
+ai/ai.cabal
+ai/stack.yaml.lock
+ai/.stack-work
 assets-gen
 cardgen/.gradle
 cardgen/.idea
@@ -11,6 +14,7 @@ state.sqlite
 zzbot
 
 # vim
+*.swo
 *.swp
 
 *.iml
