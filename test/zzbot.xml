@@ -17,5 +17,7 @@
     <!-- build: ai -->
     <shell command="stack build"  workdir="ai"/>
     <shell command="stack run ai" workdir="ai"/>
+    <!-- check that .hs files are all formatted -->
+    <shell command="ormolu -m check $(git ls-files '*.hs' | xargs)"/>
   </builder>
 </config>

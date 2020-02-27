@@ -30,6 +30,8 @@ if [[ -z "$ZZ_HOME" && ! -e "zzbot" ]]; then
   exit 1
 fi
 
+format_hs
+
 if [[ ! -z "$ZZ_HOME" ]]
 then
   # zzbot's repository is locally available, update it
@@ -40,5 +42,3 @@ then
   run cd -
 fi
 run ./zzbot test/zzbot.xml
-
-format_hs
