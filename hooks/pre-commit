@@ -5,6 +5,23 @@ function run() {
   $@
 }
 
+function format_hs() {
+  # Adapted from https://prettier.io/docs/en/precommit.html
+  FILES=$(git diff --cached --name-only --diff-filter=ACMR "*.hs" | sed 's| |\\ |g')
+  [ -z "$FILES" ] && return 0
+
+  which ormolu
+  [[ "$?" == "0" ]] || { echo "ormolu not found. Please install it to automatically format files"; return 0; }
+
+  # Format all selected files
+  echo "$FILES" | xargs ormolu --mode inplace
+
+  # Add back the modified files to staging
+  echo "$FILES" | xargs git add
+
+  return 0
+}
+
 set -e
 
 if [[ -z "$ZZ_HOME" && ! -e "zzbot" ]]; then
@@ -23,3 +40,5 @@ then
   run cd -
 fi
 run ./zzbot test/zzbot.xml
+
+format_hs
