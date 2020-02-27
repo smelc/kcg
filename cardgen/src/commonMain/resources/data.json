@@ -1,10 +1,10 @@
 {
   "creatures": [
-    { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "victoryPoints":2, "skills":["HitFromBack"], "x":72, "y":0 },
-    { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "victoryPoints":2, "x":0, "y":0 },
-    { "team":"Human", "name":"archer", "hp":2, "attack":1, "victoryPoints":2, "skills":["Ranged"], "x":144, "y":0 },
-    { "team":"Undead", "name":"skeleton", "hp":1, "attack":1, "victoryPoints":1, "x":0, "y":72 },
-    { "team":"Undead", "name":"vampire", "hp":3, "attack":3, "victoryPoints":1, "x":72, "y":72 }
+    { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["HitFromBack"], "x":72, "y":0 },
+    { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
+    { "team":"Human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["Ranged"], "x":144, "y":0 },
+    { "team":"Undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
+    { "team":"Undead", "name":"vampire", "hp":3, "attack":3, "victory_points":1, "x":72, "y":72 }
   ],
   "neutral": [
     { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },
@@ -17,7 +17,7 @@
     { "name":"green_potion", "x":96, "y":0 }
   ],
   "skills": [
-    { "name":"hitfromback", "text":"back hit", "description":"hits 2 cells away when in the back line"},
-    { "name":"ranged", "text":"ranged", "description":"hits any enemy in its column"}
+    { "name":"HitFromBack", "text":"back hit", "description":"hits 2 cells away when in the back line"},
+    { "name":"Ranged", "text":"ranged", "description":"hits any enemy in its column"}
   ]
 }
