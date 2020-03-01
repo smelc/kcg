@@ -5,6 +5,8 @@ import com.soywiz.korio.serialization.json.Json
 
 enum class Skill {
     HitFromBack,
+    Flammable,
+    Leader,
     Ranged;
 
     companion object {

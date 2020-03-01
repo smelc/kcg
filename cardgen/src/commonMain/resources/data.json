@@ -3,8 +3,11 @@
     { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["HitFromBack"], "x":72, "y":0 },
     { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
     { "team":"Human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["Ranged"], "x":144, "y":0 },
+    { "team":"Human", "name":"general", "hp":3, "attack":3, "victory_points":5, "skills":["Leader"], "x":216, "y":0 },
     { "team":"Undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
-    { "team":"Undead", "name":"vampire", "hp":3, "attack":3, "victory_points":1, "x":72, "y":72 }
+    { "team":"Undead", "name":"vampire", "hp":3, "attack":3, "victory_points":5, "x":72, "y":72 },
+    { "team":"Undead", "name":"archer", "hp":1, "attack":1, "victory_points":1, "skills":["Ranged"], "x":144, "y":72 },
+    { "team":"Undead", "name":"mummy", "hp":5, "attack":2, "victory_points":2,"skills":["Flammable"],  "x":216, "y":72 }
   ],
   "neutral": [
     { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },
@@ -18,6 +21,8 @@
   ],
   "skills": [
     { "name":"HitFromBack", "text":"back hit", "description":"hits 2 cells away when in the back line"},
+    { "name":"Flammable", "text":"flammable", "description":"fire deals double damage"},
+    { "name":"Leader", "text":"leadership", "description":"adjacent allies get +2 moral upon arrival"},
     { "name":"Ranged", "text":"ranged", "description":"hits any enemy in its column"}
   ]
 }
