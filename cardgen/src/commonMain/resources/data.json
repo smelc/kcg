@@ -1,13 +1,13 @@
 {
   "creatures": [
-    { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "victory_points":2, "skills":["HitFromBack"], "x":72, "y":0 },
-    { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "victory_points":2, "x":0, "y":0 },
-    { "team":"Human", "name":"archer", "hp":2, "attack":1, "victory_points":2, "skills":["Ranged"], "x":144, "y":0 },
-    { "team":"Human", "name":"general", "hp":3, "attack":3, "victory_points":5, "skills":["Leader"], "x":216, "y":0 },
+    { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "moral":3, "victory_points":2, "x":72, "y":0, "skills":["HitFromBack"] },
+    { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "moral":3, "victory_points":2, "x":0, "y":0 },
+    { "team":"Human", "name":"archer",    "hp":2, "attack":1, "moral":3, "victory_points":2, "x":144, "y":0, "skills":["Ranged"] },
+    { "team":"Human", "name":"general",   "hp":3, "attack":3, "moral":5, "victory_points":5, "x":216, "y":0, "skills":["Leader", "Unique"] },
     { "team":"Undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
-    { "team":"Undead", "name":"vampire", "hp":3, "attack":3, "victory_points":5, "x":72, "y":72 },
-    { "team":"Undead", "name":"archer", "hp":1, "attack":1, "victory_points":1, "skills":["Ranged"], "x":144, "y":72 },
-    { "team":"Undead", "name":"mummy", "hp":5, "attack":2, "victory_points":2,"skills":["Flammable"],  "x":216, "y":72 }
+    { "team":"Undead", "name":"vampire",  "hp":3, "attack":3, "victory_points":5, "x":72, "y":72 },
+    { "team":"Undead", "name":"archer",   "hp":1, "attack":1, "victory_points":1, "x":144, "y":72, "skills":["Ranged"]},
+    { "team":"Undead", "name":"mummy",    "hp":5, "attack":2, "victory_points":2, "x":216, "y":72, "skills":["Flammable"]}
   ],
   "neutral": [
     { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },

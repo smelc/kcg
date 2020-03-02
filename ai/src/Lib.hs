@@ -20,7 +20,9 @@ instance FromJSON Team
 
 data Skill
   = HitFromBack
+  | Leader
   | Ranged
+  | Unique
   deriving (Generic, Show)
 
 instance ToJSON Skill
@@ -43,6 +45,7 @@ data Creature
         creatureName :: String,
         hp :: Int,
         attack :: Int,
+        moral :: Maybe Int,
         victoryPoints :: Int,
         skills :: Maybe [Skill]
       }
@@ -91,7 +94,7 @@ someFunc = do
   print decoding2
   print allDecoding
   where
-    creature :: Creature = Creature Human "archer" 1 1 2 Nothing
+    creature :: Creature = Creature Human "archer" 1 1 (Just 2) 2 Nothing
     creatureJSON = "{ \"team\":\"Human\", \"name\":\"spearman\",  \"hp\":2, \"attack\":1, \"victory_points\":2, \"skills\":[\"HitFromBack\"]}"
     creature2JSON = "{ \"team\":\"Human\", \"foobar\":\"ignore\", \"name\":\"spearman\",  \"hp\":2, \"attack\":1, \"victory_points\":2}"
     decoding :: Either String Creature = eitherDecode creatureJSON

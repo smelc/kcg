@@ -7,7 +7,8 @@ enum class Skill {
     HitFromBack,
     Flammable,
     Leader,
-    Ranged;
+    Ranged,
+    Unique;
 
     companion object {
 

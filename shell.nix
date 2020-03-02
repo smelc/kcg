@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    ormolu gmp
+    ormolu # gmp
   ];
 }
 

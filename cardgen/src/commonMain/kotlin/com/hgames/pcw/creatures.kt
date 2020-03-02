@@ -21,7 +21,7 @@ private fun findTeam(s: String?): Team? {
     return Team.values().firstOrNull { it.name.equals(s, true) }
 }
 
-data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val victoryPoints: Int, val skills: List<Skill>) {
+data class Creature(val name: String, val team: Team, var hps: Int, val attack: Int, val moral: Int?, val victoryPoints: Int, val skills: List<Skill>) {
 
     companion object {
 
@@ -46,6 +46,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             val team: Team = findTeam(teamString) ?: throw IllegalStateException("No such team: $teamString")
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
+            val moral: Int? = map["moral"] as? Int ?: null
             val victoryPoints: Int = map["victory_points"] as? Int
                     ?: throw IllegalStateException(genErrMsg("victory_points"))
             val skills: List<Skill> = readSkill(map["skills"])
@@ -56,7 +57,7 @@ data class Creature(val name: String, val team: Team, var hps: Int, val attack: 
             val h: Int = map["h"] as? Int ?: 72 // default
             val rect = RectangleInt(x, y, w, h)
 
-            return Pair(Creature(name, team, hp, attack, victoryPoints, skills), rect)
+            return Pair(Creature(name, team, hp, attack, moral, victoryPoints, skills), rect)
         }
 
         private fun readSkill(input: Any?): List<Skill> {
