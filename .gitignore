@@ -1,5 +1,6 @@
 .envrc
 ai/ai.cabal
+ai/data.json
 ai/stack.yaml.lock
 ai/.stack-work
 assets-gen

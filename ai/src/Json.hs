@@ -2,28 +2,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Lib
-  ( someFunc,
+module Json
+  ( readJson,
   )
 where
 
+import Card
 import Data.Aeson
 import Data.ByteString.Lazy
 import GHC.Generics
 
-data Team = Human | Undead
-  deriving (Generic, Show)
-
 instance ToJSON Team
 
 instance FromJSON Team
-
-data Skill
-  = HitFromBack
-  | Leader
-  | Ranged
-  | Unique
-  deriving (Generic, Show)
 
 instance ToJSON Skill
 
@@ -38,23 +29,6 @@ creatureOptions =
     impl "creatureName" = "name"
     impl "victoryPoints" = "victory_points"
     impl s = s
-
-data Creature
-  = Creature
-      { team :: Team,
-        creatureName :: String,
-        hp :: Int,
-        attack :: Int,
-        moral :: Maybe Int,
-        victoryPoints :: Int,
-        skills :: Maybe [Skill]
-      }
-  deriving (Generic, Show)
-
-data Neutral
-  = Neutral
-      {neutralName :: String}
-  deriving (Generic, Show)
 
 neutralOptions :: Options
 neutralOptions =
@@ -78,13 +52,24 @@ instance FromJSON Neutral where
 data AllData
   = AllData
       { creatures :: [Creature],
-        neutral :: Maybe [Neutral]
+        neutral :: [Neutral]
       }
   deriving (Generic, Show)
 
 instance ToJSON AllData
 
 instance FromJSON AllData
+
+readJson ::
+  -- | The content of data.json
+  ByteString ->
+  Either String [Card]
+readJson json = do
+  allData :: AllData <- eitherDecode json
+  let creatureCards :: [Card] = Prelude.map CreatureCard (creatures allData)
+      neutralCards :: [Card] = Prelude.map NeutralCard (neutral allData)
+      allCards :: [Card] = creatureCards ++ neutralCards
+  return allCards
 
 someFunc :: IO ()
 someFunc = do

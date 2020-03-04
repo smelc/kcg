@@ -1,6 +1,12 @@
 module Main where
 
-import Lib
+import Card
+import Data.ByteString.Lazy
+import Json
 
 main :: IO ()
-main = someFunc
+main = do
+  content <- Data.ByteString.Lazy.readFile dataFile
+  print $ readJson content
+  where
+    dataFile = "data.json"
