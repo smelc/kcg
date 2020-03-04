@@ -4,6 +4,7 @@ module Card
   ( Card (..),
     Creature (..),
     Neutral,
+    NeutralKind,
     Skill,
     Team (..),
   )
@@ -34,9 +35,14 @@ data Creature
       }
   deriving (Generic, Show)
 
+data NeutralKind
+  = Health
+  | Life
+  deriving (Generic, Show)
+
 data Neutral
   = Neutral
-      {neutralName :: String}
+      {neutralName :: NeutralKind}
   deriving (Generic, Show)
 
 data Card

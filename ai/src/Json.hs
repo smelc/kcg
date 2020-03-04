@@ -10,6 +10,7 @@ where
 import Card
 import Data.Aeson
 import Data.ByteString.Lazy
+import Data.List.Extra
 import GHC.Generics
 
 instance ToJSON Team
@@ -39,6 +40,14 @@ neutralOptions =
     impl "neutralName" = "name"
     impl s = s
 
+neutralKindOptions :: Options
+neutralKindOptions =
+  defaultOptions
+    { constructorTagModifier = impl
+    }
+  where
+    impl = lower
+
 instance ToJSON Creature
 
 instance FromJSON Creature where
@@ -48,6 +57,11 @@ instance ToJSON Neutral
 
 instance FromJSON Neutral where
   parseJSON = genericParseJSON neutralOptions
+
+instance ToJSON NeutralKind
+
+instance FromJSON NeutralKind where
+  parseJSON = genericParseJSON neutralKindOptions
 
 data AllData
   = AllData
