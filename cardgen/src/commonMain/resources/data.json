@@ -10,14 +10,17 @@
     { "team":"Undead", "name":"mummy",    "hp":5, "attack":2, "victory_points":2, "x":216, "y":72, "skills":["Flammable"]}
   ],
   "neutral": [
-    { "name": "health" ,"tile":"red_potion", "text": "Heals 1 HP" },
-    { "name": "life", "tile":"green_potion", "text": "Restores all HP" }
+    { "name": "Health" ,"tile":"red_potion", "text": "Heals 1 HP" },
+    { "name": "Life", "tile":"green_potion", "text": "Restores all HP" }
+  ],
+  "items": [
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
     { "name":"sword", "x":32, "y":0 },
     { "name":"red_potion", "x":64, "y":0 },
-    { "name":"green_potion", "x":96, "y":0 }
+    { "name":"green_potion", "x":96, "y":0 },
+    { "name":"crown", "x":0, "y":32 }
   ],
   "skills": [
     { "name":"HitFromBack", "text":"back hit", "description":"hits 2 cells away when in the back line"},

@@ -3,8 +3,10 @@
 module Card
   ( Card (..),
     Creature (..),
+    Item,
+    ItemObject (..),
     Neutral,
-    NeutralKind,
+    NeutralObject (..),
     Skill,
     Team (..),
   )
@@ -35,17 +37,27 @@ data Creature
       }
   deriving (Generic, Show)
 
-data NeutralKind
+data Neutral
   = Health
   | Life
   deriving (Generic, Show)
 
-data Neutral
-  = Neutral
-      {neutralName :: NeutralKind}
+newtype NeutralObject
+  = NeutralObject
+      {neutral :: Neutral}
+  deriving (Generic, Show)
+
+data Item
+  = Crown
+  deriving (Generic, Show)
+
+newtype ItemObject
+  = ItemObject
+      {item :: Item}
   deriving (Generic, Show)
 
 data Card
   = CreatureCard Creature
   | NeutralCard Neutral
+  | ItemCard Item
   deriving (Show)

@@ -31,22 +31,23 @@ creatureOptions =
     impl "victoryPoints" = "victory_points"
     impl s = s
 
-neutralOptions :: Options
-neutralOptions =
+neutralObjectOptions :: Options
+neutralObjectOptions =
   defaultOptions
     { fieldLabelModifier = impl
     }
   where
-    impl "neutralName" = "name"
+    impl "neutral" = "name"
     impl s = s
 
-neutralKindOptions :: Options
-neutralKindOptions =
+itemObjectOptions :: Options
+itemObjectOptions =
   defaultOptions
-    { constructorTagModifier = impl
+    { fieldLabelModifier = impl
     }
   where
-    impl = lower
+    impl "item" = "name"
+    impl s = s
 
 instance ToJSON Creature
 
@@ -55,18 +56,27 @@ instance FromJSON Creature where
 
 instance ToJSON Neutral
 
-instance FromJSON Neutral where
-  parseJSON = genericParseJSON neutralOptions
+instance FromJSON Neutral
 
-instance ToJSON NeutralKind
+instance ToJSON NeutralObject
 
-instance FromJSON NeutralKind where
-  parseJSON = genericParseJSON neutralKindOptions
+instance FromJSON NeutralObject where
+  parseJSON = genericParseJSON neutralObjectOptions
+
+instance ToJSON Item
+
+instance FromJSON Item
+
+instance ToJSON ItemObject
+
+instance FromJSON ItemObject where
+  parseJSON = genericParseJSON itemObjectOptions
 
 data AllData
   = AllData
       { creatures :: [Creature],
-        neutral :: [Neutral]
+        neutral :: [NeutralObject],
+        items :: [ItemObject]
       }
   deriving (Generic, Show)
 
@@ -79,26 +89,9 @@ readJson ::
   ByteString ->
   Either String [Card]
 readJson json = do
-  allData :: AllData <- eitherDecode json
-  let creatureCards :: [Card] = Prelude.map CreatureCard (creatures allData)
-      neutralCards :: [Card] = Prelude.map NeutralCard (neutral allData)
-      allCards :: [Card] = creatureCards ++ neutralCards
+  AllData creatures neutral items <- eitherDecode json
+  let creatureCards :: [Card] = Prelude.map CreatureCard creatures
+      neutralCards :: [Card] = Prelude.map (NeutralCard . Card.neutral) neutral
+      itemCards :: [Card] = Prelude.map (ItemCard . Card.item) items
+      allCards :: [Card] = creatureCards ++ neutralCards ++ itemCards
   return allCards
-
-someFunc :: IO ()
-someFunc = do
-  print (encode creature)
-  print creatureJSON
-  print decoding
-  print decoding2
-  print allDecoding
-  where
-    creature :: Creature = Creature Human "archer" 1 1 (Just 2) 2 Nothing
-    creatureJSON = "{ \"team\":\"Human\", \"name\":\"spearman\",  \"hp\":2, \"attack\":1, \"victory_points\":2, \"skills\":[\"HitFromBack\"]}"
-    creature2JSON = "{ \"team\":\"Human\", \"foobar\":\"ignore\", \"name\":\"spearman\",  \"hp\":2, \"attack\":1, \"victory_points\":2}"
-    decoding :: Either String Creature = eitherDecode creatureJSON
-    decoding2 :: Either String Creature = eitherDecode creature2JSON
-    prefix = "{ \"creatures\": ["
-    suffix = "] }"
-    allDataJSON :: ByteString = append prefix $ append creatureJSON suffix
-    allDecoding :: Either String AllData = eitherDecode allDataJSON
