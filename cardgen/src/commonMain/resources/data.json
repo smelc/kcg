@@ -10,10 +10,11 @@
     { "team":"Undead", "name":"mummy",    "hp":5, "attack":2, "victory_points":2, "x":216, "y":72, "skills":["Flammable"]}
   ],
   "neutral": [
-    { "name": "Health" ,"tile":"red_potion", "text": "Heals 1 HP" },
-    { "name": "Life", "tile":"green_potion", "text": "Restores all HP" }
+    { "name":"Health", "tile":"red_potion", "text":"Heals 1 HP" },
+    { "name":"Life", "tile":"green_potion", "text":"Restores all HP" }
   ],
   "items": [
+    { "name":"Crown", "tile":"crown", "text":"Leadership +2" }
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },
