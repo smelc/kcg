@@ -1,20 +1,20 @@
 {
   "creatures": [
-    { "team":"Human", "name":"spearman",  "hp":2, "attack":1, "moral":3, "victory_points":2, "x":72, "y":0, "skills":["HitFromBack"] },
-    { "team":"Human", "name":"swordsman", "hp":2, "attack":1, "moral":3, "victory_points":2, "x":0, "y":0 },
-    { "team":"Human", "name":"archer",    "hp":2, "attack":1, "moral":3, "victory_points":2, "x":144, "y":0, "skills":["Ranged"] },
-    { "team":"Human", "name":"general",   "hp":3, "attack":3, "moral":5, "victory_points":5, "x":216, "y":0, "skills":["Leader", "Unique"] },
-    { "team":"Undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
-    { "team":"Undead", "name":"vampire",  "hp":3, "attack":3, "victory_points":5, "x":72, "y":72 },
-    { "team":"Undead", "name":"archer",   "hp":1, "attack":1, "victory_points":1, "x":144, "y":72, "skills":["Ranged"]},
-    { "team":"Undead", "name":"mummy",    "hp":5, "attack":2, "victory_points":2, "x":216, "y":72, "skills":["Flammable"]}
+    { "team":"human", "name":"spearman",  "hp":2, "attack":1, "moral":3, "victory_points":2, "x":72, "y":0, "skills":["HitFromBack"] },
+    { "team":"human", "name":"swordsman", "hp":2, "attack":1, "moral":3, "victory_points":2, "x":0, "y":0 },
+    { "team":"human", "name":"archer",    "hp":2, "attack":1, "moral":3, "victory_points":2, "x":144, "y":0, "skills":["Ranged"] },
+    { "team":"human", "name":"general",   "hp":3, "attack":3, "moral":5, "victory_points":5, "x":216, "y":0, "skills":["Leader", "Unique"] },
+    { "team":"undead", "name":"skeleton", "hp":1, "attack":1, "victory_points":1, "x":0, "y":72 },
+    { "team":"undead", "name":"vampire",  "hp":3, "attack":3, "victory_points":5, "x":72, "y":72 },
+    { "team":"undead", "name":"archer",   "hp":1, "attack":1, "victory_points":1, "x":144, "y":72, "skills":["Ranged"]},
+    { "team":"undead", "name":"mummy",    "hp":5, "attack":2, "victory_points":2, "x":216, "y":72, "skills":["Flammable"]}
   ],
   "neutral": [
-    { "name":"Health", "tile":"red_potion", "text":"Heals 1 HP" },
-    { "name":"Life", "tile":"green_potion", "text":"Restores all HP" }
+    { "name":"health", "tile":"red_potion", "text":"Heals 1 HP" },
+    { "name":"life", "tile":"green_potion", "text":"Restores all HP" }
   ],
   "items": [
-    { "name":"Crown", "tile":"crown", "text":"Leadership +2" }
+    { "name":"crown", "tile":"crown", "text":"Leadership +2" }
   ],
   "tiles": [
     { "name":"heart", "x":0, "y":0 },

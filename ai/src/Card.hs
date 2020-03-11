@@ -49,6 +49,7 @@ newtype NeutralObject
 
 data Item
   = Crown
+  | FooBar
   deriving (Generic, Show)
 
 newtype ItemObject

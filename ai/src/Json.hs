@@ -15,7 +15,14 @@ import GHC.Generics
 
 instance ToJSON Team
 
-instance FromJSON Team
+instance FromJSON Team where
+  parseJSON = genericParseJSON toLowerConstructorOptions
+
+toLowerConstructorOptions :: Options
+toLowerConstructorOptions =
+  defaultOptions
+    { constructorTagModifier = lower
+    }
 
 instance ToJSON Skill
 
@@ -56,7 +63,8 @@ instance FromJSON Creature where
 
 instance ToJSON Neutral
 
-instance FromJSON Neutral
+instance FromJSON Neutral where
+  parseJSON = genericParseJSON toLowerConstructorOptions
 
 instance ToJSON NeutralObject
 
@@ -65,7 +73,8 @@ instance FromJSON NeutralObject where
 
 instance ToJSON Item
 
-instance FromJSON Item
+instance FromJSON Item where
+  parseJSON = genericParseJSON toLowerConstructorOptions
 
 instance ToJSON ItemObject
 
