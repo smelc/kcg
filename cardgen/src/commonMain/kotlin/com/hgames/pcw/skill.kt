@@ -20,7 +20,7 @@ enum class Skill {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyList()
             val topList: List<*>? = topLevel["skills"] as? List<*>
             val data: List<SkillData> = topList?.map(::readSkill) ?: emptyList()
-            println("Read ${data.size} neutral entries from disk")
+            println("""Read ${data.size} skill entries from disk ${data.joinToString(" ") { it.title }}""")
             return data
         }
 
@@ -30,15 +30,15 @@ enum class Skill {
             val name: String = map["name"] as? String ?: throw IllegalStateException("Skill misses field \"name\"")
             val genErrMsg: (String) -> String = { x: String -> "Skill $name misses field \"${x}\"" }
             val skill: Skill = checkNotNull(findSkill(name), { "Skill not found: \"$name\"" })
+            val title: String = checkNotNull(map["title"], { genErrMsg("title") }) as String
             val text: String = checkNotNull(map["text"], { genErrMsg("text") }) as String
-            val desc: String = checkNotNull(map["description"], { genErrMsg("description") }) as String
 
-            return SkillData(skill, text, desc)
+            return SkillData(skill, title, text)
         }
     }
 }
 
-data class SkillData(val skill: Skill, val text: String, val desc: String)
+data class SkillData(val skill: Skill, val title: String, val text: String)
 
 fun findSkill(s: String?): Skill? {
     if (s == null) return null

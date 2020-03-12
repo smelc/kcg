@@ -36,8 +36,11 @@ fun Stage.putJustifiedText(text: String, font: BitmapFont, color: RGBA, x: Doubl
 
 data class TextBucket(val text: String, val font: BitmapFont, val color: RGBA)
 
-fun Stage.putJustifiedText2(bucket1: TextBucket, bucket2: TextBucket, x: Double, y: Double, width: Double) {
-    var yoffset = 0
+/**
+ * @return The consumed height
+ */
+fun Stage.putJustifiedText2(bucket1: TextBucket, bucket2: TextBucket, x: Double, y: Double, width: Double): Double {
+    var yoffset: Double = 0.0
     var consumedx = 0
     var spaceWidth = bucket1.font.measureWidth(" ")
     for (word in bucket1.text.split(" ")) {
@@ -66,4 +69,5 @@ fun Stage.putJustifiedText2(bucket1: TextBucket, bucket2: TextBucket, x: Double,
         }
         consumedx += wordWidth + spaceWidth
     }
+    return yoffset
 }

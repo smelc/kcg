@@ -21,7 +21,7 @@ interface ICard {
 }
 
 class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>) : ICard {
-    override val title: String = creature.name
+    override val title: String = creature.title
     override fun getBitmap(): BitmapSlice<Bitmap> {
         return bmp
     }
@@ -105,7 +105,7 @@ fun Stage.putBorderDecoration(cdi: CardDrawingInput) {
 fun Stage.putCreatureTile(cdi: CardDrawingInput): Double {
     val bmp = cdi.card.getBitmap()
     val imgx = (width - (bmp.width)) / 2
-    val imgy = (height - (bmp.height)) / 8
+    val imgy = (height - (bmp.height)) / 12
     val img = image(bmp) {
         position(imgx, imgy)
         // smoothing = false
@@ -139,7 +139,7 @@ fun Stage.putJustifiedText(cdi: CardDrawingInput, text: String, basey: Double) {
 fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     val leftMargin = getLeftMargin(cdi)
     val statsLineY = texty + getVerticalSpaceAfterTitle(cdi)
-    val skilly = putStatsLine(cdi, card, leftMargin, statsLineY)
+    var skilly = putStatsLine(cdi, card, leftMargin, statsLineY)
 
     /* Skills */
     // val gold: RGBA = opaque(197, 195, 44)
@@ -148,9 +148,10 @@ fun Stage.putStats(cdi: CardDrawingInput, card: CreatureCard, texty: Double) {
     for (skill in card.creature.skills) {
         val found: SkillData = cdi.skills.find { it.skill == skill }
                 ?: throw IllegalStateException("SkillData not found: $skill")
-        val bucket1 = TextBucket(found.text, cdi.font, gold)
-        val bucket2 = TextBucket("(" + found.desc + ")", cdi.itfont, grey)
-        putJustifiedText2(bucket1, bucket2, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
+        val bucket1 = TextBucket(found.title, cdi.font, gold)
+        val bucket2 = TextBucket(found.text , cdi.itfont, grey)
+        val consumedHeight = putJustifiedText2(bucket1, bucket2, leftMargin.toDouble(), skilly, (width - leftMargin * 2))
+        skilly += consumedHeight + cdi.itfont.lineHeight
     }
 }
 

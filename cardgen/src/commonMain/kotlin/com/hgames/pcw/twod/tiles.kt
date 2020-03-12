@@ -8,6 +8,7 @@ import com.soywiz.korio.serialization.json.Json
 import com.soywiz.korma.geom.RectangleInt
 
 enum class Tile {
+    CROWN,
     GREEN_POTION,
     HEART,
     RED_POTION,
@@ -23,7 +24,7 @@ enum class Tile {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyMap()
             val topList: List<*>? = topLevel["tiles"] as? List<*>
             val data: List<Pair<Tile, RectangleInt>> = topList?.map { x -> readTile(x) } ?: emptyList()
-            println("Read ${data.size} tiles from disk")
+            println("Read ${data.size} tiles from disk: " + data.map { x -> x.first.name}.joinToString(" "))
             return data.map { (t, r) -> Pair(t, bmp.sliceWithSize(r.x, r.y, r.width, r.height)) }.toMap()
         }
 

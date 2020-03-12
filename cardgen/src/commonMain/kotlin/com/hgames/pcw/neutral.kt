@@ -22,7 +22,7 @@ enum class Neutral {
             val topLevel: Map<*, *> = Json.parse(file.readString()) as? Map<*, *> ?: return emptyMap()
             val topList: List<*>? = topLevel["neutral"] as? List<*>
             val data: List<Pair<Neutral, ICard>> = topList?.map { x -> readNeutral(tiles, x) } ?: emptyList()
-            println("Read ${data.size} neutral entries from disk")
+            println("""Read ${data.size} neutral entries from disk: ${data.joinToString(" ") { it.first.name }}""")
             return data.toMap()
         }
 
@@ -36,9 +36,10 @@ enum class Neutral {
             val bmp: BitmapSlice<T> = checkNotNull(tiles[tileEnum], { "No bitmap for tile \"$tile\"" })
             val neutral: Neutral = checkNotNull(findNeutral(tile), { "Neutral named \"$tile\" not found" })
             val text: String = checkNotNull(map["text"], { genErrMsg("text") }) as String
+            val title: String = checkNotNull(map["title"], { genErrMsg("title") }) as String
 
             val card: ICard = object : NeutralCard(text) {
-                override val title: String get() = name
+                override val title: String get() = title
                 override fun getBitmap(): BitmapSlice<Bitmap> {
                     return bmp
                 }
