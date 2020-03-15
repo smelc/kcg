@@ -24,6 +24,8 @@ dependencies:
 - bytestring
 - containers
 - extra
+- gloss
+- gloss-juicy
 
 library:
   source-dirs: src

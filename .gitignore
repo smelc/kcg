@@ -12,6 +12,9 @@ fonts/FontBuilder
 help
 oryx
 screenshots
+scripts/.stack-work
+scripts/scripts.cabal
+scripts/stack.yaml.lock
 state.sqlite
 zzbot
 

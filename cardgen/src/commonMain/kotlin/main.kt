@@ -59,7 +59,7 @@ suspend fun Stage.drawCard(cdi: CardDrawingInput, gendir: String?) {
     drawCard(cdi)
     val bmp = renderToBitmap(this.views)
     if (gendir != null) {
-        val path = "${gendir}/${cdi.card.title}.png"
+        val path = "${gendir}/${cdi.card.name}.png"
         bmp.writeTo(path.uniVfs, PNG)
         println("Written $path")
     }

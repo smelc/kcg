@@ -14,6 +14,7 @@ import com.soywiz.korma.geom.RectangleInt
 
 interface ICard {
 
+    val name: String
     val title: String
     fun getBitmap(): BitmapSlice<Bitmap>
     fun getColorTheme(): ColorTheme
@@ -21,6 +22,7 @@ interface ICard {
 }
 
 class CreatureCard(val creature: Creature, private val bmp: BitmapSlice<Bitmap>) : ICard {
+    override val name: String = creature.name
     override val title: String = creature.title
     override fun getBitmap(): BitmapSlice<Bitmap> {
         return bmp

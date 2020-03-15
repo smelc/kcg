@@ -31,5 +31,3 @@ run convert $FILE_1616 -scale 200% $FILE_1616_x2
 declare -r FILE_2424_FILENAME=$(basename $FILE_2424)
 declare -r FILE_2424_x3="$DEST_DIR/"${FILE_2424_FILENAME%".png"}"_x3.png"
 run convert $FILE_2424 -scale 300% $FILE_2424_x3
-
-run cp "$DEST_DIR/data.json" "ai/."

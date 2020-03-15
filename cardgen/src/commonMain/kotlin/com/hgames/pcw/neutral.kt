@@ -39,6 +39,7 @@ enum class Neutral {
             val title: String = checkNotNull(map["title"], { genErrMsg("title") }) as String
 
             val card: ICard = object : NeutralCard(text) {
+                override val name: String get() = name
                 override val title: String get() = title
                 override fun getBitmap(): BitmapSlice<Bitmap> {
                     return bmp
