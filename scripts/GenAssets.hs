@@ -7,6 +7,7 @@
 module GenAssets where
 
 import System.Exit
+import System.IO
 import System.Process
 
 fileToThrice :: [(String, String)]
@@ -17,25 +18,43 @@ fileToThrice =
   where
     cardgenResources = "cardgen/src/commonMain/resources"
 
-gitRoot :: IO (Either String FilePath)
+gitRoot :: IO (ExitCode, String, String) -- value, stdout, stderr
 gitRoot = do
-  (exitCode, stdout, _) <- readCreateProcessWithExitCode createProcess ""
-  return $
-    case exitCode of
-      ExitSuccess -> Right stdout
-      _ -> Left "git root cannot be obtained"
+  readCreateProcessWithExitCode createProcess ""
   where
     createProcess = shell "git rev-parse --show-toplevel"
 
+needsCopy ::
+  -- | git root
+  FilePath ->
+  -- | The file to check
+  FilePath ->
+  -- | Whether the file has a modification
+  IO (Maybe Bool)
+needsCopy gitRoot filepath = do
+  (rc, procOut, procErr) <- readCreateProcessWithExitCode createProcess ""
+  result <-
+    case rc of
+      ExitFailure _ -> do
+        hPutStrLn stderr procErr
+        return Nothing
+      ExitSuccess ->
+        return $ Just $ null procOut
+  return result
+  where
+    createProcess = (shell $ "git diff " ++ filepath) {cwd = Just gitRoot}
+
 mainRoot :: FilePath -> IO ExitCode
-mainRoot gitRoot = undefined
+mainRoot gitRoot = do
+  undefined
 
 main :: IO ()
 main = do
-  maybeRoot :: Either String FilePath <- gitRoot
-  case maybeRoot of
-    Left error -> do
-      print error
-    Right root -> do
-      mainRoot root
-  undefined
+  (gitRootRC, gitRootStdout, gitRootStdErr) <- gitRoot
+  rc <- case gitRootRC of
+    ExitFailure code -> do
+      print gitRootStdErr
+      return $ ExitFailure code
+    ExitSuccess ->
+      mainRoot gitRootStdout
+  exitWith rc
