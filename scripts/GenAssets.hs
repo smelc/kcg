@@ -10,6 +10,7 @@
 
 module GenAssets where
 
+import Control.Monad
 import Data.Foldable
 import Data.List.Extra
 import Data.Maybe
@@ -54,7 +55,7 @@ needsCopy gitRoot filepath = do
         hPutStrLn stderr procErr
         return Nothing
       ExitSuccess ->
-        return $ Just $ null procOut
+        return $ Just $ not $ null procOut
   return result
   where
     createProcess = (shell $ "git diff " ++ filepath) {cwd = Just gitRoot}
@@ -62,7 +63,6 @@ needsCopy gitRoot filepath = do
 -- Returns whether scaling went well
 scaleFile :: FilePath -> FilePath -> FilePath -> Int -> IO Bool
 scaleFile gitRoot input destDir scaling = do
-  print filename
   (rc, outmsg, errmsg) <- readCreateProcessWithExitCode createProcess ""
   case rc of
     ExitSuccess -> return True
@@ -88,24 +88,30 @@ scaleFile gitRoot input destDir scaling = do
 -- The main that executes with the root git directory known
 mainRoot :: FilePath -> IO ExitCode
 mainRoot gitRoot = do
-  print gitRoot
   filesToDiff :: [(FilePath, Maybe Bool)] <-
     mapM (\(f, _, _) -> needsCopy' f) filesToScale
   if any isNothing (map snd filesToDiff)
     then do
       let log f = hPutStrLn stderr $ "Cannot find out if " ++ f ++ " has a diff"
-          wrongs :: [(FilePath, Maybe Bool)] = (filter (\(_, mb) -> isNothing mb) filesToDiff)
+          wrongs :: [(FilePath, Maybe Bool)] =
+            filter (\(_, mb) -> isNothing mb) filesToDiff
           wrongs' :: [FilePath] = map fst wrongs
       traverse_ (\f -> log f) wrongs'
       return $ ExitFailure 1
     else do
-      mapM scaleFile' filesToScale
-      undefined
+      let filesToScale' =
+            filter
+              (\(f, _, _) -> (f, Just True) `elem` filesToDiff)
+              filesToScale
+      successes :: [Bool] <- mapM scaleFile' filesToScale'
+      return $ if (all id successes) then ExitSuccess else ExitFailure 1
   where
     scaleFile' (t1, t2, t3) = scaleFile gitRoot t1 t2 t3
     needsCopy' :: FilePath -> IO (FilePath, Maybe Bool)
     needsCopy' f = do
-      maybeBool <- needsCopy gitRoot f
+      maybeBool :: Maybe Bool <- needsCopy gitRoot f
+      when (isJust maybeBool && not (fromJust maybeBool)) $
+        putStrLn (f ++ ": nothing to do")
       return $ (f, maybeBool)
 
 main :: IO ()
