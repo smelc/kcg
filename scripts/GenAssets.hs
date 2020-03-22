@@ -1,10 +1,14 @@
+#!/usr/bin/env stack
+-- stack --resolver lts-14.11 script
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 -- To launch [ghcid](https://github.com/ndmitchell/ghcid)
 -- in a terminal, do:
 --   stack exec ghcid -- --command="ghci GenAssets.hs"
 -- To execute:
---   stack exec runghc -- GenAssets.hs
+--   chmod +x ./GenAssets.hs
+--   ./GenAssets.hs # Thanks to the shebang line at the top of the file
 -- To disable coc in vim if not working (do it right after opening!):
 --   :CocDisable
 
@@ -36,7 +40,7 @@ gitRoot = do
     ExitSuccess -> return $ Just $ trim outmsg
     ExitFailure _ -> do
       hPutStrLn stderr errmsg
-      return $ Nothing
+      return Nothing
   where
     createProcess = shell "git rev-parse --show-toplevel"
 
@@ -90,13 +94,13 @@ mainRoot :: FilePath -> IO ExitCode
 mainRoot gitRoot = do
   filesToDiff :: [(FilePath, Maybe Bool)] <-
     mapM (\(f, _, _) -> needsCopy' f) filesToScale
-  if any isNothing (map snd filesToDiff)
+  if any (isNothing . snd) filesToDiff
     then do
       let log f = hPutStrLn stderr $ "Cannot find out if " ++ f ++ " has a diff"
           wrongs :: [(FilePath, Maybe Bool)] =
             filter (\(_, mb) -> isNothing mb) filesToDiff
           wrongs' :: [FilePath] = map fst wrongs
-      traverse_ (\f -> log f) wrongs'
+      traverse_ log wrongs'
       return $ ExitFailure 1
     else do
       let filesToScale' =
@@ -104,7 +108,7 @@ mainRoot gitRoot = do
               (\(f, _, _) -> (f, Just True) `elem` filesToDiff)
               filesToScale
       successes :: [Bool] <- mapM scaleFile' filesToScale'
-      return $ if (all id successes) then ExitSuccess else ExitFailure 1
+      return $ if and successes then ExitSuccess else ExitFailure 1
   where
     scaleFile' (t1, t2, t3) = scaleFile gitRoot t1 t2 t3
     needsCopy' :: FilePath -> IO (FilePath, Maybe Bool)
@@ -112,7 +116,7 @@ mainRoot gitRoot = do
       maybeBool :: Maybe Bool <- needsCopy gitRoot f
       when (isJust maybeBool && not (fromJust maybeBool)) $
         putStrLn (f ++ ": nothing to do")
-      return $ (f, maybeBool)
+      return (f, maybeBool)
 
 main :: IO ()
 main = do

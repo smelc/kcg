@@ -26,9 +26,12 @@ dependencies:
 - extra
 - gloss
 - gloss-juicy
+- JuicyPixels
 
 library:
-  source-dirs: src
+  source-dirs:
+    - src
+    - ui
 
 executables:
   ai-exe:

@@ -1,5 +1,9 @@
 name:                scripts
-dependencies: []
+dependencies:
+    - base
+    - extra
+    - filepath
+    - process
 
 executables:
   genassets:
