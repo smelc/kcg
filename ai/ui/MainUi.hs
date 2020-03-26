@@ -4,11 +4,13 @@ module MainUi where
 
 import Control.Exception
 import Data.Dynamic
+import qualified Data.List.NonEmpty as NE
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Juicy
 
-backgrounds = ["assets-gen/forest.png"]
+backgrounds :: NE.NonEmpty FilePath
+backgrounds = "assets-gen/forest.png" NE.:| []
 
 data UIException
   = LoadException FilePath
@@ -41,4 +43,4 @@ mainUI = do
           Just size -> size
   display (InWindow gameName bgSize (0, 0)) white bg
   where
-    bgPath :: FilePath = backgrounds !! 0
+    bgPath :: FilePath = NE.head backgrounds

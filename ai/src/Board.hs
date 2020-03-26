@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Board where
@@ -14,9 +15,9 @@ data CardSpot
   | Bottom
   | BottomRight
 
-type CardsOnTable = Map.Map CardSpot Creature
+type CardsOnTable = Map.Map CardSpot (Creature Core)
 
-type CardsInHand = Set.Set Card
+type CardsInHand = Set.Set (Card Core)
 
 data PlayerPart
   = PlayerPart

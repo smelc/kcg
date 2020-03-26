@@ -1,17 +1,26 @@
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Card
   ( Card (..),
     Creature (..),
+    Forall,
     Item,
     ItemObject (..),
     Neutral,
     NeutralObject (..),
+    Phase (..),
     Skill,
     Team (..),
   )
 where
 
+import Data.Kind (Constraint, Type)
 import GHC.Generics
 
 data Team = Human | Undead
@@ -25,7 +34,17 @@ data Skill
   | Unique
   deriving (Generic, Show)
 
-data Creature
+data Phase = UI | Core
+
+type family CoordType (p :: Phase) where
+  CoordType UI = Int
+  CoordType Core = ()
+
+type Forall (c :: Type -> Constraint) (p :: Phase) =
+  ( c (CoordType p)
+  )
+
+data Creature (p :: Phase)
   = Creature
       { team :: Team,
         creatureName :: String,
@@ -33,9 +52,13 @@ data Creature
         attack :: Int,
         moral :: Maybe Int,
         victoryPoints :: Int,
-        skills :: Maybe [Skill]
+        skills :: Maybe [Skill],
+        x :: CoordType p,
+        y :: CoordType p
       }
-  deriving (Generic, Show)
+  deriving (Generic)
+
+deriving instance Forall Show p => Show (Creature p)
 
 data Neutral
   = Health
@@ -57,8 +80,9 @@ newtype ItemObject
       {item :: Item}
   deriving (Generic, Show)
 
-data Card
-  = CreatureCard Creature
+data Card (p :: Phase)
+  = CreatureCard (Creature p)
   | NeutralCard Neutral
   | ItemCard Item
-  deriving (Show)
+
+deriving instance Forall Show p => Show (Card p)

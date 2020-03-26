@@ -1,6 +1,12 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Json
   ( readJson,
@@ -56,9 +62,9 @@ itemObjectOptions =
     impl "item" = "name"
     impl s = s
 
-instance ToJSON Creature
+instance ToJSON (Creature UI)
 
-instance FromJSON Creature where
+instance FromJSON (Creature UI) where
   parseJSON = genericParseJSON creatureOptions
 
 instance ToJSON Neutral
@@ -81,26 +87,28 @@ instance ToJSON ItemObject
 instance FromJSON ItemObject where
   parseJSON = genericParseJSON itemObjectOptions
 
-data AllData
+data AllData (p :: Phase)
   = AllData
-      { creatures :: [Creature],
+      { creatures :: [Creature p],
         neutral :: [NeutralObject],
         items :: [ItemObject]
       }
-  deriving (Generic, Show)
+  deriving (Generic)
 
-instance ToJSON AllData
+deriving instance Forall Show p => Show (AllData p)
 
-instance FromJSON AllData
+instance ToJSON (AllData UI)
+
+instance FromJSON (AllData UI)
 
 readJson ::
   -- | The content of data.json
   ByteString ->
-  Either String [Card]
+  Either String [Card UI]
 readJson json = do
   AllData creatures neutral items <- eitherDecode json
-  let creatureCards :: [Card] = Prelude.map CreatureCard creatures
-      neutralCards :: [Card] = Prelude.map (NeutralCard . Card.neutral) neutral
-      itemCards :: [Card] = Prelude.map (ItemCard . Card.item) items
-      allCards :: [Card] = creatureCards ++ neutralCards ++ itemCards
+  let creatureCards = Prelude.map CreatureCard creatures
+      neutralCards = Prelude.map (NeutralCard . Card.neutral) neutral
+      itemCards = Prelude.map (ItemCard . Card.item) items
+      allCards = creatureCards ++ neutralCards ++ itemCards
   return allCards
