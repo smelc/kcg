@@ -1,16 +1,25 @@
 #!/usr/bin/env stack
--- stack --resolver lts-14.11 script
-
-{-# LANGUAGE ScopedTypeVariables #-}
-
+-- stack --resolver lts-14.11 runghc
+--
 -- To launch [ghcid](https://github.com/ndmitchell/ghcid)
 -- in a terminal, do:
 --   stack exec ghcid -- --command="ghci GenAssets.hs"
--- To execute:
---   chmod +x ./GenAssets.hs
---   ./GenAssets.hs # Thanks to the shebang line at the top of the file
+--
+-- One can execute `./GenAssets.hs` thanks to the shebang line
+-- at the top of the file
+--
 -- To disable coc in vim if not working (do it right after opening!):
 --   :CocDisable
+-- To disable ALE:
+--   :ALEDisable
+--
+-- Both CoC and ALE should work, because they use the *.{yaml,cabal}
+-- files in this directory to discover the configuration. That is why
+-- we use 'runghc' in the stack configuration above; so that it relies
+-- on those files too, as opposed to using 'script' that would ignore
+-- those files, see https://docs.haskellstack.org/en/stable/GUIDE/#script-interpreter
+
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module GenAssets where
 
