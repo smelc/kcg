@@ -23,10 +23,12 @@ dependencies:
 - base >= 4.7 && < 5
 - bytestring
 - containers
+- exceptions
 - extra
 - gloss
 - gloss-juicy
 - JuicyPixels
+- optparse-applicative
 
 library:
   source-dirs:
