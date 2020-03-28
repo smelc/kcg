@@ -32,9 +32,11 @@ pictureSize picture =
     BitmapSection rect _ -> Just $ rectSize rect
     whatever -> Nothing
 
-getOrThrow :: (MonadThrow m) => Maybe a
-           -> UIException
-           -> m a
+getOrThrow ::
+  (MonadThrow m) =>
+  Maybe a ->
+  UIException ->
+  m a
 getOrThrow ma e =
   case ma of
     Nothing -> throw e
@@ -44,7 +46,7 @@ mainUI :: (MonadIO m, MonadThrow m) => m ()
 mainUI = do
   maybeBG <- liftIO $ loadJuicyPNG bgPath
   bg <- getOrThrow maybeBG $ LoadException bgPath
-  bgSize <- getOrThrow (pictureSize bg) (InternalUnexpectedPictureType bgPath)
+  bgSize <- getOrThrow (pictureSize bg) $ InternalUnexpectedPictureType bgPath
   liftIO $ display (InWindow gameName bgSize (0, 0)) white bg
   where
     bgPath :: FilePath = NE.head backgrounds
