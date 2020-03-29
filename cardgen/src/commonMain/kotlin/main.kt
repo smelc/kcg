@@ -59,7 +59,12 @@ suspend fun Stage.drawCard(cdi: CardDrawingInput, gendir: String?) {
     drawCard(cdi)
     val bmp = renderToBitmap(this.views)
     if (gendir != null) {
-        val path = "${gendir}/${cdi.card.name}.png"
+        var filename = cdi.card.name
+        when (cdi.card) {
+            is CreatureCard -> filename = cdi.card.creature.team.toString().toLowerCase() + "_" + filename
+        }
+        filename += ".png"
+        val path = "${gendir}/${filename}"
         bmp.writeTo(path.uniVfs, PNG)
         println("Written $path")
     }

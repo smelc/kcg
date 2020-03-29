@@ -39,11 +39,13 @@ data class Creature(val name: String, val title: String, val team: Team, var hps
         private fun readCreature(input: Any?): Pair<Creature, RectangleInt> {
             val map: Map<*, *> = input as? Map<*, *> ?: throw IllegalStateException()
 
-            val name: String = map["name"] as? String ?: throw IllegalStateException("Creature misses field \"name\"")
+            val id: Map<*, *> = map["id"] as? Map<*, *> ?: throw IllegalStateException("Creature misses field \"id\"")
+            val readID = readID(id)
+            val name = readID.first
+            val teamString: String = readID.second
             val genErrMsg: (String) -> String = { x: String -> "Creature $name misses field \"${x}\"" }
 
             val title: String = map["title"] as? String ?: throw IllegalStateException(genErrMsg("title"))
-            val teamString: String = map["team"] as? String ?: throw IllegalStateException(genErrMsg("team"))
             val team: Team = findTeam(teamString) ?: throw IllegalStateException("No such team: $teamString")
             val hp: Int = map["hp"] as? Int ?: throw IllegalStateException(genErrMsg("hp"))
             val attack: Int = map["attack"] as? Int ?: throw IllegalStateException(genErrMsg("attack"))
@@ -59,6 +61,12 @@ data class Creature(val name: String, val title: String, val team: Team, var hps
             val rect = RectangleInt(x, y, w, h)
 
             return Pair(Creature(name, title, team, hp, attack, moral, victoryPoints, skills), rect)
+        }
+
+        private fun readID(map: Map<*, *>): Pair<String, String> {
+            val name: String = map["name"] as? String ?: throw IllegalStateException("\"id\" misses field \"name\"")
+            val team: String = map["team"] as? String ?: throw IllegalStateException("\"id\" misses field \"team\"")
+            return Pair (name, team)
         }
 
         private fun readSkill(input: Any?): List<Skill> {
