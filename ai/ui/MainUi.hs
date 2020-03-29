@@ -1,18 +1,23 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module MainUi where
 
+import Card
 import Control.Exception
 import Control.Monad.Catch
 import Control.Monad.IO.Class
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
+import qualified Data.Map.Strict as Map
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Juicy
 
+assets_gen_path = "assets-gen"
+
 backgrounds :: NE.NonEmpty FilePath
-backgrounds = "assets-gen/forest.png" NE.:| []
+backgrounds = (assets_gen_path ++ "/forest.png") NE.:| []
 
 data UIException
   = LoadException FilePath
@@ -42,7 +47,14 @@ getOrThrow ma e =
     Nothing -> throw e
     Just a -> return a
 
-mainUI :: (MonadIO m, MonadThrow m) => m ()
+loadAssets ::
+  [Creature UI] ->
+  Map.Map CreatureID Picture
+loadAssets uiData = undefined
+
+mainUI ::
+  (MonadIO m, MonadThrow m) =>
+  m ()
 mainUI = do
   maybeBG <- liftIO $ loadJuicyPNG bgPath
   bg <- getOrThrow maybeBG $ LoadException bgPath

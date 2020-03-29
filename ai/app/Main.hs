@@ -7,9 +7,9 @@ module Main where
 import Card
 import Control.Applicative
 import Control.Monad
+import qualified Data.ByteString.Lazy as ByteString
 import Data.Either
 import Data.Either.Combinators hiding (isLeft)
-import qualified Data.ByteString.Lazy as ByteString
 import Json
 import MainUi
 import qualified Options.Applicative as Opt
