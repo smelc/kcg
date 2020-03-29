@@ -1,13 +1,19 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
 import Card
 import Control.Applicative
+import Control.Monad
+import Data.Either
+import Data.Either.Combinators hiding (isLeft)
 import qualified Data.ByteString.Lazy as ByteString
 import Json
 import MainUi
 import qualified Options.Applicative as Opt
+import System.Exit
 
 data UIMode = UIYes | UINo
 
@@ -35,8 +41,13 @@ main = do
   putStrLn $ "Reading " ++ dataFile
   content <- ByteString.readFile dataFile
   putStrLn $ "Read " ++ dataFile ++ ". Interpreting its content."
-  print $ readJson content
-  putStrLn $ "Interpreted " ++ dataFile ++ "."
+  let eitherUiData :: Either String [Card UI] = readJson content
+  when (isLeft eitherUiData) $ do
+    putStrLn $ fromLeft' eitherUiData
+    exitWith $ ExitFailure 1
+  let uiData = fromRight' eitherUiData
+  putStrLn $ "Interpreted " ++ dataFile
+  putStrLn $ show uiData
   case optUIMode of
     UIYes -> do
       Prelude.putStrLn "Opening UI"

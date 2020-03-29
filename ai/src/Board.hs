@@ -7,6 +7,8 @@ import Card
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
+-- | The spot of a card, as visible from the bottom of the screen. For the
+-- | top part, think as if it was in the bottom
 data CardSpot
   = TopLeft
   | Top
