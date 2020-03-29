@@ -2,6 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
@@ -24,6 +25,24 @@ instance ToJSON Team
 instance FromJSON Team where
   parseJSON = genericParseJSON toLowerConstructorOptions
 
+instance ToJSON CreatureKind
+
+instance FromJSON CreatureKind where
+  parseJSON = genericParseJSON toLowerConstructorOptions
+
+creatureIDOptions :: Options
+creatureIDOptions =
+  defaultOptions
+    { fieldLabelModifier = \case
+        "creatureKind" -> "name"
+        s -> s
+    }
+
+instance ToJSON CreatureID
+
+instance FromJSON CreatureID where
+  parseJSON = genericParseJSON creatureIDOptions
+
 toLowerConstructorOptions :: Options
 toLowerConstructorOptions =
   defaultOptions
@@ -37,12 +56,10 @@ instance FromJSON Skill
 creatureOptions :: Options
 creatureOptions =
   defaultOptions
-    { fieldLabelModifier = impl
+    { fieldLabelModifier = \case
+        "victoryPoints" -> "victory_points"
+        s -> s
     }
-  where
-    impl "creatureName" = "name"
-    impl "victoryPoints" = "victory_points"
-    impl s = s
 
 neutralObjectOptions :: Options
 neutralObjectOptions =

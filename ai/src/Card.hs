@@ -6,19 +6,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Card
-  ( Card (..),
-    Creature (..),
-    Forall,
-    Item,
-    ItemObject (..),
-    Neutral,
-    NeutralObject (..),
-    Phase (..),
-    Skill,
-    Team (..),
-  )
-where
+module Card where
 
 import Data.Kind (Constraint, Type)
 import GHC.Generics
@@ -44,10 +32,22 @@ type Forall (c :: Type -> Constraint) (p :: Phase) =
   ( c (CoordType p)
   )
 
+data CreatureKind
+  = Spearman
+  | Swordsman
+  | Archer
+  | General
+  | Skeleton
+  | Vampire
+  | Mummy
+  deriving (Show, Generic)
+
+data CreatureID = CreatureID { creatureKind :: CreatureKind, team :: Team }
+  deriving (Show, Generic)
+
 data Creature (p :: Phase)
   = Creature
-      { team :: Team,
-        creatureName :: String,
+      { id :: CreatureID,
         hp :: Int,
         attack :: Int,
         moral :: Maybe Int,
