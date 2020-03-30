@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nvim -p $(git ls-files "*.hs" | grep -v Setup.hs) -p data.json package.yaml -c ":ALEDisable"

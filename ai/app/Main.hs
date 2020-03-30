@@ -5,6 +5,7 @@
 module Main where
 
 import Card
+import Constants
 import Control.Applicative
 import Control.Monad
 import qualified Data.ByteString.Lazy as ByteString
@@ -41,18 +42,16 @@ main = do
   putStrLn $ "Reading " ++ dataFile
   content <- ByteString.readFile dataFile
   putStrLn $ "Read " ++ dataFile ++ ". Interpreting its content."
-  let eitherUiData :: Either String [Card UI] = readJson content
+  let eitherUiData :: Either String [Card UI] = parseJson content
   when (isLeft eitherUiData) $ do
     putStrLn $ fromLeft' eitherUiData
     exitWith $ ExitFailure 1
   let uiData = fromRight' eitherUiData
   putStrLn $ "Interpreted " ++ dataFile
-  putStrLn $ show uiData
+  print uiData
   case optUIMode of
     UIYes -> do
       Prelude.putStrLn "Opening UI"
       mainUI
     UINo -> return ()
   putStrLn "Terminating"
-  where
-    dataFile = "data.json"

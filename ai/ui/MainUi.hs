@@ -14,17 +14,17 @@ import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Juicy
 
-assets_gen_path = "assets-gen"
-
-backgrounds :: NE.NonEmpty FilePath
-backgrounds = (assets_gen_path ++ "/forest.png") NE.:| []
-
 data UIException
   = LoadException FilePath
   | InternalUnexpectedPictureType FilePath
   deriving (Show, Typeable)
 
 instance Exception UIException
+
+assets_gen_path = "assets-gen"
+
+backgrounds :: NE.NonEmpty FilePath
+backgrounds = (assets_gen_path ++ "/forest.png") NE.:| []
 
 gameName = "Pixel Card Wars" -- Card Combat Retro
 

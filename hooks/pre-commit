@@ -8,16 +8,18 @@ function run() {
 function format_hs() {
   # Adapted from https://prettier.io/docs/en/precommit.html
   FILES=$(git diff --cached --name-only --diff-filter=ACMR "*.hs" | sed 's| |\\ |g')
-  [ -z "$FILES" ] && return 0
+  [ -z "$FILES" ] && { echo "nothing to format with ormolu"; return 0; }
 
-  which ormolu
+  which ormolu &> /dev/null
   [[ "$?" == "0" ]] || { echo "ormolu not found. Please install it to automatically format files"; return 0; }
 
+  # echo "format files with ormolu: $FILES"
+
   # Format all selected files
-  echo "$FILES" | xargs ormolu --mode inplace
+  ormolu --mode inplace $FILES
 
   # Add back the modified files to staging
-  echo "$FILES" | xargs git add
+  git add $FILES
 
   return 0
 }
@@ -35,7 +37,7 @@ format_hs
 if [[ ! -z "$ZZ_HOME" ]]
 then
   # zzbot's repository is locally available, update it
-  declare -r HERE=`pwd`
+  declare -r HERE=$(pwd)
   run cd $ZZ_HOME
   run stack build
   run stack install zzbot --local-bin-path $HERE

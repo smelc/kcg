@@ -10,7 +10,7 @@
 {-# LANGUAGE UndecidableInstances #-}
 
 module Json
-  ( readJson,
+  ( parseJson,
   )
 where
 
@@ -118,11 +118,11 @@ instance ToJSON (AllData UI)
 
 instance FromJSON (AllData UI)
 
-readJson ::
+parseJson ::
   -- | The content of data.json
   ByteString ->
   Either String [Card UI]
-readJson json = do
+parseJson json = do
   AllData creatures neutral items <- eitherDecode json
   let creatureCards = Prelude.map CreatureCard creatures
       neutralCards = Prelude.map (NeutralCard . Card.neutral) neutral

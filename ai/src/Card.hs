@@ -42,7 +42,7 @@ data CreatureKind
   | Mummy
   deriving (Show, Generic)
 
-data CreatureID = CreatureID { creatureKind :: CreatureKind, team :: Team }
+data CreatureID = CreatureID {creatureKind :: CreatureKind, team :: Team}
   deriving (Show, Generic)
 
 data Creature (p :: Phase)
