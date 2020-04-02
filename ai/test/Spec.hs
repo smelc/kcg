@@ -7,10 +7,14 @@ import Control.Monad (forM_)
 import qualified Data.ByteString.Lazy as ByteString (readFile)
 import Data.Either (isRight)
 import Data.List (isPrefixOf, isSuffixOf)
+import Data.List.Extra (lower)
 import Data.List.Split (wordsBy)
 import Json
 import System.Directory (listDirectory)
 import Test.Hspec
+import Text.Printf (printf)
+
+assetGenSep = '+'
 
 genAssetsIdentifiers ::
   [FilePath] ->
@@ -35,8 +39,22 @@ genAssetsIdentifiers assets =
   where
     prefix = kgenPrefix
     suffix :: [Char] = ".png"
-    sep :: Char = '+'
-    trim :: String -> String = take (length suffix) . drop (length prefix)
+    sep :: Char = assetGenSep
+    trim :: String -> String = take' (length suffix) . drop (length prefix)
+    take' n l = take (length l - n) l
+
+checkGenAssetsMember ::
+  [Team] ->
+  [CreatureKind] ->
+  (String, String) ->
+  Bool
+checkGenAssetsMember teams creatures (lhs, rhs) =
+  let teamStrings = map present teams
+      creaturesStrings = map present creatures
+   in (lhs, rhs) `elem` [(t, c) | t <- teamStrings, c <- creaturesStrings]
+  where
+    present :: (Show a) => a -> String
+    present = lower . show
 
 main :: IO ()
 main = do
@@ -52,9 +70,21 @@ main = do
     describe ("enum iterations are correct") $ do
       it "Team enumeration is correct" $ do
         fromEnum (head teams) `shouldBe` 0
-      it "Creatures enumeration is correct" $ do
+      it "CreatureKind enumeration is correct" $ do
         fromEnum (head creatures) `shouldBe` 0
--- forM_ genAssets $ \genAsset -> do
--- describe "identifiers are complete" $ do
---   it "kgen-\\1-\\2 files match identifiers"
---     $ checkGenAssetsMembers assets
+    describe "identifiers suffice"
+      $ forM_ genAssets
+      $ \genAsset -> do
+        let descr :: String =
+              printf
+                "%s%c%s has matching constructors"
+                (fst genAsset)
+                assetGenSep
+                (snd genAsset)
+        it descr $
+          checkGenAssetsMember teams creatures genAsset `shouldBe` True
+    describe "broken identifier not found" $ do
+      let badTeam = "badTeam"
+          badID = "foo"
+      it (badTeam ++ [assetGenSep] ++ badID ++ " has no matching constructors") $
+        checkGenAssetsMember teams creatures (badTeam, badID) `shouldBe` False
