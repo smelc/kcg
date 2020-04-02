@@ -4,6 +4,7 @@
 module MainUi where
 
 import Card
+import Constants
 import Control.Exception
 import Control.Monad.Catch
 import Control.Monad.IO.Class
@@ -21,10 +22,8 @@ data UIException
 
 instance Exception UIException
 
-assets_gen_path = "assets-gen"
-
 backgrounds :: NE.NonEmpty FilePath
-backgrounds = (assets_gen_path ++ "/forest.png") NE.:| []
+backgrounds = (assetsGenPath ++ "/forest.png") NE.:| []
 
 gameName = "Pixel Card Wars" -- Card Combat Retro
 

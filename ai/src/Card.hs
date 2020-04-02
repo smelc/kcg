@@ -12,7 +12,7 @@ import Data.Kind (Constraint, Type)
 import GHC.Generics
 
 data Team = Human | Undead
-  deriving (Generic, Show)
+  deriving (Enum, Generic, Show)
 
 data Skill
   = HitFromBack
@@ -40,7 +40,7 @@ data CreatureKind
   | Skeleton
   | Vampire
   | Mummy
-  deriving (Show, Generic)
+  deriving (Enum, Show, Generic)
 
 data CreatureID = CreatureID {creatureKind :: CreatureKind, team :: Team}
   deriving (Show, Generic)

@@ -30,6 +30,10 @@ dependencies:
 - gloss-juicy
 - JuicyPixels
 - optparse-applicative
+# Test only dependencies, should not be here; but required for CoC
+- directory
+- hspec
+- split
 
 library:
   source-dirs:
@@ -57,4 +61,3 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - ai
-    - hspec

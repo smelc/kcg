@@ -59,10 +59,13 @@ suspend fun Stage.drawCard(cdi: CardDrawingInput, gendir: String?) {
     drawCard(cdi)
     val bmp = renderToBitmap(this.views)
     if (gendir != null) {
-        var filename = cdi.card.name
+        // kgen prefix is used to recognize files, don't change that
+        var filename = "kgen-"
         when (cdi.card) {
-            is CreatureCard -> filename = cdi.card.creature.team.toString().toLowerCase() + "_" + filename
+            // + separator is used in Haskell tests, don't change that
+            is CreatureCard -> filename += cdi.card.creature.team.toString().toLowerCase() + "+"
         }
+        filename += cdi.card.name
         filename += ".png"
         val path = "${gendir}/${filename}"
         bmp.writeTo(path.uniVfs, PNG)
