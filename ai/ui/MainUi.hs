@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module MainUi where
+module MainUi (loadAssets, mainUI) where
 
 import Card
 import Constants
@@ -36,6 +36,12 @@ pictureSize picture =
     BitmapSection rect _ -> Just $ rectSize rect
     whatever -> Nothing
 
+data Assets
+  = Assets
+      { backgroundPics :: NE.NonEmpty Picture,
+        creaturePics :: Map.Map CreatureKind Picture
+      }
+
 getOrThrow ::
   (MonadThrow m) =>
   Maybe a ->
@@ -46,10 +52,26 @@ getOrThrow ma e =
     Nothing -> throw e
     Just a -> return a
 
+loadBackgrounds ::
+  (MonadIO m, MonadThrow m) =>
+  m (NE.NonEmpty Picture)
+loadBackgrounds = do
+  let pics = NE.map loadBackground backgrounds
+  traverse Prelude.id pics
+  where
+    loadBackground :: (MonadIO m, MonadThrow m) => FilePath -> m Picture
+    loadBackground filepath = do
+      maybePic <- liftIO $ loadJuicyPNG filepath
+      pic :: Picture <- getOrThrow maybePic $ LoadException filepath
+      return pic
+
 loadAssets ::
+  (MonadIO m, MonadThrow m) =>
   [Creature UI] ->
-  Map.Map CreatureID Picture
-loadAssets uiData = undefined
+  m Assets
+loadAssets uiData = do
+  bgs <- loadBackgrounds
+  return $ Assets bgs _
 
 mainUI ::
   (MonadIO m, MonadThrow m) =>
