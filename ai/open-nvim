@@ -1,3 +1,4 @@
 #!/bin/bash
 
-nvim -p $(git ls-files "*.hs" | grep -v Setup.hs) -p data.json package.yaml -c ":ALEDisable"
+FILES=$(git ls-files "*.hs" | grep -v Setup.hs | grep -v Main.hs | grep -v Action.hs)
+nvim -p $FILES data.json package.yaml -c ":ALEDisable"

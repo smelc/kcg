@@ -4,6 +4,10 @@ module Constants where
 
 assetsGenPath = "assets-gen"
 
+assetGenSep = '+'
+
+dotPng = ".png"
+
 -- | Prefix used to recognize kotlin-generated assets
 kgenPrefix = "kgen-"
 

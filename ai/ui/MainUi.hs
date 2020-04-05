@@ -1,7 +1,11 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module MainUi (loadAssets, mainUI) where
+module MainUi
+  ( loadAssets,
+    mainUI,
+  )
+where
 
 import Card
 import Constants
@@ -71,7 +75,7 @@ loadAssets ::
   m Assets
 loadAssets uiData = do
   bgs <- loadBackgrounds
-  return $ Assets bgs _
+  return $ Assets bgs undefined
 
 mainUI ::
   (MonadIO m, MonadThrow m) =>
