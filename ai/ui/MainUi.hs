@@ -8,6 +8,7 @@ module MainUi
 where
 
 import Card
+import CardUi (creatureID2AssetFilename)
 import Constants
 import Control.Exception
 import Control.Monad.Catch
@@ -21,6 +22,7 @@ import Graphics.Gloss.Juicy
 
 data UIException
   = LoadException FilePath
+  | CreatureLoadException CreatureID
   | InternalUnexpectedPictureType FilePath
   deriving (Show, Typeable)
 
@@ -43,7 +45,7 @@ pictureSize picture =
 data Assets
   = Assets
       { backgroundPics :: NE.NonEmpty Picture,
-        creaturePics :: Map.Map CreatureKind Picture
+        creaturePics :: Map.Map CreatureID Picture
       }
 
 getOrThrow ::
@@ -69,14 +71,32 @@ loadBackgrounds = do
       pic :: Picture <- getOrThrow maybePic $ LoadException filepath
       return pic
 
+loadCreature ::
+  CreatureID ->
+  IO (Maybe Picture)
+loadCreature creatureID = do
+  loadJuicyPNG path
+  where
+    filename = creatureID2AssetFilename creatureID
+    path = assetsGenPath ++ "/" ++ filename
+
+-- | Loads backgrounds and creatures assets from disk
 loadAssets ::
   (MonadIO m, MonadThrow m) =>
-  [Creature UI] ->
+  [CreatureID] ->
   m Assets
 loadAssets uiData = do
   bgs <- loadBackgrounds
-  return $ Assets bgs undefined
+  assocList <- liftIO $ sequence $ map entryMaker uiData
+  return $ Assets bgs $ Map.fromList assocList
+  where
+    entryMaker :: CreatureID -> IO (CreatureID, Picture)
+    entryMaker id = do
+      maybeV <- loadCreature id
+      v <- getOrThrow maybeV $ CreatureLoadException id
+      return (id, v)
 
+-- | Loads a background and display it
 mainUI ::
   (MonadIO m, MonadThrow m) =>
   m ()
