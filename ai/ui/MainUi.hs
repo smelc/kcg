@@ -7,6 +7,7 @@ module MainUi
   )
 where
 
+import Board
 import Card
 import CardUi (creatureID2AssetFilename)
 import Constants
@@ -95,6 +96,18 @@ loadAssets uiData = do
       maybeV <- loadCreature id
       v <- getOrThrow maybeV $ CreatureLoadException id
       return (id, v)
+
+-- | Builds the picture of a board
+pictureBoard ::
+  (MonadIO m) =>
+  Assets ->
+  Board ->
+  m Picture
+pictureBoard assets board = do
+  return $ mconcat (bg : cards)
+  where
+    bg :: Picture = NE.head $ backgroundPics assets
+    cards = undefined
 
 -- | Loads a background and display it
 mainUI ::

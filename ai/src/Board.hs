@@ -8,7 +8,8 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 
 -- | The spot of a card, as visible from the bottom of the screen. For the
--- | top part, think as if it was in the bottom
+-- | top part, think as if it was in the bottom, turning the board
+-- | 180 degrees clockwise
 data CardSpot
   = TopLeft
   | Top
@@ -27,8 +28,6 @@ data PlayerPart
         invisible :: CardsInHand
       }
 
-data Board
-  = Board
-      { player1 :: PlayerPart,
-        player2 :: PlayerPart
-      }
+data PlayerSpot = PlayerBottom | PlayerTop
+
+type Board = Map.Map PlayerSpot PlayerPart
