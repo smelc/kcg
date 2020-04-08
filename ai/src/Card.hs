@@ -47,7 +47,7 @@ data CreatureID = CreatureID {creatureKind :: CreatureKind, team :: Team}
 
 data Creature (p :: Phase)
   = Creature
-      { id :: CreatureID,
+      { creatureId :: CreatureID,
         hp :: Int,
         attack :: Int,
         moral :: Maybe Int,

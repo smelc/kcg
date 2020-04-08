@@ -58,6 +58,7 @@ creatureOptions =
   defaultOptions
     { fieldLabelModifier = \case
         "victoryPoints" -> "victory_points"
+        "creatureId" -> "id"
         s -> s
     }
 

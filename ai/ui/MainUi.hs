@@ -8,6 +8,7 @@ module MainUi
 where
 
 import Board
+import BoardUi
 import Card
 import CardUi (creatureID2AssetFilename)
 import Constants
@@ -88,7 +89,7 @@ loadAssets ::
   m Assets
 loadAssets uiData = do
   bgs <- loadBackgrounds
-  assocList <- liftIO $ sequence $ map entryMaker uiData
+  assocList <- liftIO $ traverse entryMaker uiData
   return $ Assets bgs $ Map.fromList assocList
   where
     entryMaker :: CreatureID -> IO (CreatureID, Picture)
@@ -99,15 +100,35 @@ loadAssets uiData = do
 
 -- | Builds the picture of a board
 pictureBoard ::
-  (MonadIO m) =>
+  (MonadIO m, MonadThrow m) =>
   Assets ->
   Board ->
   m Picture
 pictureBoard assets board = do
-  return $ mconcat (bg : cards)
+  return $ mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
-    cards = undefined
+    board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
+    board' =
+      map
+        ( \(playerSpot, playerPart) ->
+            (playerSpot, Map.toList $ visible playerPart)
+        )
+        (Map.toList board)
+    helper :: PlayerSpot -> (CardSpot, a) -> (IntCoord, a)
+    helper p (c, w) = (cardPixelsOffset p c, w)
+    cards :: [(IntCoord, Creature Core)]
+    cards =
+      concat $
+        map
+          ( \(playerSpot, spotsAndCreatures :: [(CardSpot, Creature Core)]) ->
+              map (helper playerSpot) spotsAndCreatures
+          )
+          board'
+    helper' :: (IntCoord, CreatureID) -> Picture
+    helper' = undefined
+    cards' :: [Picture]
+    cards' = map helper' (map (\(x, c) -> (x, creatureId c)) cards)
 
 -- | Loads a background and display it
 mainUI ::

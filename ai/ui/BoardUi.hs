@@ -1,11 +1,13 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module BoardUi
-  ( cardOffset,
+  ( cardPixelsOffset,
+    IntCoord,
   )
 where
 
 import Board
+import qualified Data.Map.Strict as Map
 
 cellPixelSize = 16 * 3
 
@@ -28,6 +30,8 @@ cellVOffset = 1
 -- | The number of cells between teams, vertically
 cellTeamVOffset = 1
 
+-- TODO Use gloss' Vector type instead
+
 type IntCoord = (Int, Int)
 
 type FloatCoord = (Float, Float)
@@ -47,8 +51,9 @@ plus fc1 fc2 = (fst fc1 + fst fc2, snd fc1 + snd fc2)
 
 cellToPixels (x, y) = (x * cellPixelSize, y * cellPixelSize)
 
-cardOffset :: PlayerSpot -> CardSpot -> IntCoord
-cardOffset playerSpot cardSpot =
+-- | The offset of a card, in pixels; from the bottom left of a background
+cardPixelsOffset :: PlayerSpot -> CardSpot -> IntCoord
+cardPixelsOffset playerSpot cardSpot =
   let base = botLeftCellOffset
       team = case playerSpot of
         PlayerBottom -> (0, 0)
