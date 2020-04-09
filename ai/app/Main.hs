@@ -46,12 +46,13 @@ main = do
   when (isLeft eitherUiData) $ do
     putStrLn $ fromLeft' eitherUiData
     exitWith $ ExitFailure 1
-  let uiData = fromRight' eitherUiData
+  let uiData :: [Card UI] = fromRight' eitherUiData
   putStrLn $ "Interpreted " ++ dataFile
   print uiData
   case optUIMode of
     UIYes -> do
       Prelude.putStrLn "Opening UI"
-      mainUI
+      assets <- loadAssets undefined
+      mainUI assets
     UINo -> return ()
   putStrLn "Terminating"

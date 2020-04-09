@@ -18,6 +18,7 @@ import Control.Monad.IO.Class
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Juicy
@@ -25,7 +26,8 @@ import Graphics.Gloss.Juicy
 data UIException
   = LoadException FilePath
   | CreatureLoadException CreatureID
-  | InternalUnexpectedPictureType FilePath
+  | InternalUnexpectedPictureType
+  | InternalUnexpectedPictureTypeAt FilePath
   deriving (Show, Typeable)
 
 instance Exception UIException
@@ -130,14 +132,29 @@ pictureBoard assets board = do
     cards' :: [Picture]
     cards' = map helper' (map (\(x, c) -> (x, creatureId c)) cards)
 
--- | Loads a background and display it
 mainUI ::
   (MonadIO m, MonadThrow m) =>
+  Assets ->
   m ()
-mainUI = do
+mainUI assets = do
+  pic <-
+    pictureBoard
+      assets
+      $ Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
+  picSize <- getOrThrow (pictureSize pic) $ InternalUnexpectedPictureType
+  liftIO $ display (InWindow gameName picSize (0, 0)) white pic
+  where
+    topPlayer = PlayerPart Map.empty Set.empty
+    botPlayer = PlayerPart Map.empty Set.empty
+
+-- | Loads a background and display it
+mainUI_deprecated ::
+  (MonadIO m, MonadThrow m) =>
+  m ()
+mainUI_deprecated = do
   maybeBG <- liftIO $ loadJuicyPNG bgPath
   bg <- getOrThrow maybeBG $ LoadException bgPath
-  bgSize <- getOrThrow (pictureSize bg) $ InternalUnexpectedPictureType bgPath
+  bgSize <- getOrThrow (pictureSize bg) $ InternalUnexpectedPictureTypeAt bgPath
   liftIO $ display (InWindow gameName bgSize (0, 0)) white bg
   where
     bgPath :: FilePath = NE.head backgrounds

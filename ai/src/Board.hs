@@ -29,5 +29,6 @@ data PlayerPart
       }
 
 data PlayerSpot = PlayerBottom | PlayerTop
+  deriving (Eq, Ord)
 
 type Board = Map.Map PlayerSpot PlayerPart
