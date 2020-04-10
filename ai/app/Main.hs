@@ -11,6 +11,7 @@ import Control.Monad
 import qualified Data.ByteString.Lazy as ByteString
 import Data.Either
 import Data.Either.Combinators hiding (isLeft)
+import Data.Maybe
 import Json
 import MainUi
 import qualified Options.Applicative as Opt
@@ -52,7 +53,8 @@ main = do
   case optUIMode of
     UIYes -> do
       Prelude.putStrLn "Opening UI"
-      assets <- loadAssets undefined
+      let creatureIDs = catMaybes $ map card2CreatureId uiData
+      assets <- loadAssets creatureIDs
       mainUI assets
     UINo -> return ()
   putStrLn "Terminating"

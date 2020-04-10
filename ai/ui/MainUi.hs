@@ -15,6 +15,7 @@ import Constants
 import Control.Exception
 import Control.Monad.Catch
 import Control.Monad.IO.Class
+import Data.Bifunctor
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
@@ -25,6 +26,7 @@ import Graphics.Gloss.Juicy
 
 data UIException
   = LoadException FilePath
+  | CreaturePictNotFoundException CreatureID
   | CreatureLoadException CreatureID
   | InternalUnexpectedPictureType
   | InternalUnexpectedPictureTypeAt FilePath
@@ -78,7 +80,7 @@ loadBackgrounds = do
 loadCreature ::
   CreatureID ->
   IO (Maybe Picture)
-loadCreature creatureID = do
+loadCreature creatureID =
   loadJuicyPNG path
   where
     filename = creatureID2AssetFilename creatureID
@@ -106,31 +108,27 @@ pictureBoard ::
   Assets ->
   Board ->
   m Picture
-pictureBoard assets board = do
+pictureBoard assets board =
   return $ mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
     board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
-    board' =
-      map
-        ( \(playerSpot, playerPart) ->
-            (playerSpot, Map.toList $ visible playerPart)
-        )
-        (Map.toList board)
+    board' = Map.toList $ Map.map (Map.toList . visible) board
     helper :: PlayerSpot -> (CardSpot, a) -> (IntCoord, a)
     helper p (c, w) = (cardPixelsOffset p c, w)
     cards :: [(IntCoord, Creature Core)]
     cards =
-      concat $
-        map
-          ( \(playerSpot, spotsAndCreatures :: [(CardSpot, Creature Core)]) ->
-              map (helper playerSpot) spotsAndCreatures
-          )
-          board'
-    helper' :: (IntCoord, CreatureID) -> Picture
-    helper' = undefined
+      concatMap
+        ( \(playerSpot, spotsAndCreatures :: [(CardSpot, Creature Core)]) ->
+            map (helper playerSpot) spotsAndCreatures
+        )
+        board'
+    helper' (intCoord, creatureId) =
+      case creaturePics assets Map.!? creatureId of
+        Just pic -> pic
+        Nothing -> throw $ CreaturePictNotFoundException creatureId
     cards' :: [Picture]
-    cards' = map helper' (map (\(x, c) -> (x, creatureId c)) cards)
+    cards' = map (helper' . Data.Bifunctor.second creatureId) cards
 
 mainUI ::
   (MonadIO m, MonadThrow m) =>
@@ -141,17 +139,17 @@ mainUI assets = do
     pictureBoard
       assets
       $ Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
-  picSize <- getOrThrow (pictureSize pic) $ InternalUnexpectedPictureType
+  picSize <- getOrThrow (pictureSize pic) InternalUnexpectedPictureType
   liftIO $ display (InWindow gameName picSize (0, 0)) white pic
   where
     topPlayer = PlayerPart Map.empty Set.empty
     botPlayer = PlayerPart Map.empty Set.empty
 
 -- | Loads a background and display it
-mainUI_deprecated ::
+mainUIDeprecated ::
   (MonadIO m, MonadThrow m) =>
   m ()
-mainUI_deprecated = do
+mainUIDeprecated = do
   maybeBG <- liftIO $ loadJuicyPNG bgPath
   bg <- getOrThrow maybeBG $ LoadException bgPath
   bgSize <- getOrThrow (pictureSize bg) $ InternalUnexpectedPictureTypeAt bgPath

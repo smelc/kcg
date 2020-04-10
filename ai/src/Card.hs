@@ -2,6 +2,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -84,5 +85,12 @@ data Card (p :: Phase)
   = CreatureCard (Creature p)
   | NeutralCard Neutral
   | ItemCard Item
+
+card2CreatureId :: Card p -> Maybe CreatureID
+card2CreatureId =
+  \case
+    CreatureCard creature -> Just $ creatureId creature
+    NeutralCard _ -> Nothing
+    ItemCard _ -> Nothing
 
 deriving instance Forall Show p => Show (Card p)
