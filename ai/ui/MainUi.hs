@@ -143,7 +143,9 @@ mainUI assets = do
   liftIO $ display (InWindow gameName picSize (0, 0)) white pic
   where
     topPlayer = PlayerPart Map.empty Set.empty
+    topTeam = Undead
     botPlayer = PlayerPart Map.empty Set.empty
+    botTeam = Human
 
 -- | Loads a background and display it
 mainUIDeprecated ::

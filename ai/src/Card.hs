@@ -3,6 +3,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
@@ -86,10 +88,14 @@ data Card (p :: Phase)
   | NeutralCard Neutral
   | ItemCard Item
 
-card2CreatureId :: Card p -> Maybe CreatureID
-card2CreatureId =
+creatureUI2CreatureCore :: Creature UI -> Creature Core
+creatureUI2CreatureCore Creature {creatureId, hp, attack, moral, victoryPoints, skills, ..} =
+  Creature creatureId hp attack moral victoryPoints skills () ()
+
+card2Creature :: Card p -> Maybe (Creature p)
+card2Creature =
   \case
-    CreatureCard creature -> Just $ creatureId creature
+    CreatureCard creature -> Just $ creature
     NeutralCard _ -> Nothing
     ItemCard _ -> Nothing
 

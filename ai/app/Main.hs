@@ -53,7 +53,7 @@ main = do
   case optUIMode of
     UIYes -> do
       Prelude.putStrLn "Opening UI"
-      let creatureIDs = catMaybes $ map card2CreatureId uiData
+      let creatureIDs = mapMaybe (fmap creatureId . card2Creature) uiData
       assets <- loadAssets creatureIDs
       mainUI assets
     UINo -> return ()

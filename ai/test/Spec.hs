@@ -1,14 +1,19 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
+import Board
 import Card
 import CardUi
 import Constants
 import Control.Monad (forM_)
 import qualified Data.ByteString.Lazy as ByteString (readFile)
 import Data.Either (isRight)
+import Data.Either.Extra (fromRight')
 import Data.List (isPrefixOf, isSuffixOf)
 import Data.List.Split (wordsBy)
+import qualified Data.Map.Strict as Map
+import Data.Maybe (mapMaybe)
 import Json
 import System.Directory (listDirectory)
 import Test.Hspec
@@ -47,12 +52,14 @@ main = do
   assets :: [FilePath] <- listDirectory assetsGenPath
   let assetsOnDisk :: [(String, String)] = genAssetsIdentifiers assets
       teams :: [Team] = [Human ..]
+      spots :: [CardSpot] = [TopLeft ..]
       creatures :: [CreatureKind] = [Spearman ..]
       assetsIds :: [(String, String)] = creatureAssetsIds
+      eitherCards = parseJson dataByteString
   hspec $ do
     describe ("read " ++ dataFile) $ do
       it "reading should succeed" $ do
-        parseJson dataByteString `shouldSatisfy` isRight
+        eitherCards `shouldSatisfy` isRight
     describe ("enum iterations are correct") $ do
       it "Team enumeration is correct" $ do
         fromEnum (head teams) `shouldBe` 0
@@ -74,3 +81,12 @@ main = do
           badID = "foo"
       it (badTeam ++ [assetGenSep] ++ badID ++ " has no matching constructors") $
         ((badTeam, badID) `elem` assetsIds) `shouldBe` False
+  let cards :: [Card UI] = fromRight' eitherCards
+      creatures' :: [Creature Core] =
+        mapMaybe
+          (fmap creatureUI2CreatureCore . card2Creature)
+          cards
+  hspec $ do
+    describe "board" $ do
+      it "listToCardsOnTable yields a full board" $ do
+        Map.size (listToCardsOnTable $ map Just creatures') `shouldBe` length spots
