@@ -10,7 +10,7 @@ where
 import Board
 import BoardUi
 import Card
-import CardUi (creatureID2AssetFilename)
+import CardUi (creatureID2FilePath)
 import Constants
 import Control.Exception
 import Control.Monad.Catch
@@ -19,6 +19,7 @@ import Data.Bifunctor
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
+import Data.Maybe (catMaybes)
 import qualified Data.Set as Set
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
@@ -27,7 +28,7 @@ import Graphics.Gloss.Juicy
 data UIException
   = LoadException FilePath
   | CreaturePictNotFoundException CreatureID
-  | CreatureLoadException CreatureID
+  | CreatureLoadException FilePath CreatureID
   | InternalUnexpectedPictureType
   | InternalUnexpectedPictureTypeAt FilePath
   deriving (Show, Typeable)
@@ -78,13 +79,16 @@ loadBackgrounds = do
       return pic
 
 loadCreature ::
+  (MonadIO m, MonadThrow m) =>
   CreatureID ->
-  IO (Maybe Picture)
-loadCreature creatureID =
-  loadJuicyPNG path
+  m Picture
+loadCreature creatureID = do
+  maybePic <- liftIO $ loadJuicyPNG path
+  case maybePic of
+    Nothing -> throw $ CreatureLoadException path creatureID
+    Just pic -> return pic
   where
-    filename = creatureID2AssetFilename creatureID
-    path = assetsGenPath ++ "/" ++ filename
+    path = creatureID2FilePath creatureID
 
 -- | Loads backgrounds and creatures assets from disk
 loadAssets ::
@@ -98,8 +102,7 @@ loadAssets uiData = do
   where
     entryMaker :: CreatureID -> IO (CreatureID, Picture)
     entryMaker id = do
-      maybeV <- loadCreature id
-      v <- getOrThrow maybeV $ CreatureLoadException id
+      v <- loadCreature id
       return (id, v)
 
 -- | Builds the picture of a board
@@ -130,11 +133,18 @@ pictureBoard assets board =
     cards' :: [Picture]
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
 
+undeadArcher = CreatureID Archer Undead
+
+undeadMummy = CreatureID Mummy Undead
+
+undeadVampire = CreatureID Vampire Undead
+
 mainUI ::
   (MonadIO m, MonadThrow m) =>
   Assets ->
+  [Card UI] ->
   m ()
-mainUI assets = do
+mainUI assets cards = do
   pic <-
     pictureBoard
       assets
@@ -142,10 +152,26 @@ mainUI assets = do
   picSize <- getOrThrow (pictureSize pic) InternalUnexpectedPictureType
   liftIO $ display (InWindow gameName picSize (0, 0)) white pic
   where
-    topPlayer = PlayerPart Map.empty Set.empty
-    topTeam = Undead
-    botPlayer = PlayerPart Map.empty Set.empty
-    botTeam = Human
+    creatures :: [Creature Core] =
+      map creatureUI2CreatureCore $ catMaybes $ map card2Creature cards
+    creaturePics' :: Map.Map CreatureID Picture = creaturePics assets
+    getCardByID searched =
+      head $ filter (\c -> creatureId c == searched) creatures
+    udArcher = getCardByID undeadArcher
+    udMummy = getCardByID undeadMummy
+    udVampire = getCardByID undeadVampire
+    topPlayer = PlayerPart topCards Set.empty
+    topCards :: CardsOnTable =
+      listToCardsOnTable
+        [ Nothing,
+          Just udVampire,
+          Just udMummy,
+          Just udArcher,
+          Just udArcher,
+          Nothing
+        ]
+    botPlayer = PlayerPart botCards Set.empty
+    botCards :: CardsOnTable = undefined
 
 -- | Loads a background and display it
 mainUIDeprecated ::

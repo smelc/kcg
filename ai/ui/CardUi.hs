@@ -1,7 +1,11 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module CardUi where
+module CardUi
+  ( creatureAssetsIds,
+    creatureID2FilePath,
+  )
+where
 
 import Card
 import Constants
@@ -17,12 +21,17 @@ creatureAssetsIds =
     teams = [Human ..]
     creatures = [Spearman ..]
 
-creatureID2AssetFilename :: CreatureID -> FilePath
-creatureID2AssetFilename CreatureID {creatureKind, team} =
-  presentIDMember creatureKind
-    ++ [assetGenSep]
+creatureID2Filename :: CreatureID -> FilePath
+creatureID2Filename CreatureID {creatureKind, team} =
+  kgenPrefix
     ++ presentIDMember team
+    ++ [assetGenSep]
+    ++ presentIDMember creatureKind
     ++ dotPng
+
+creatureID2FilePath :: CreatureID -> FilePath
+creatureID2FilePath creatureID =
+  assetsGenPath ++ "/" ++ creatureID2Filename creatureID
 
 presentIDMember :: (Show a) => a -> String
 presentIDMember = lower . show

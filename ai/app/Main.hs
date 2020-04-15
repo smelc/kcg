@@ -55,6 +55,6 @@ main = do
       Prelude.putStrLn "Opening UI"
       let creatureIDs = mapMaybe (fmap creatureId . card2Creature) uiData
       assets <- loadAssets creatureIDs
-      mainUI assets
+      mainUI assets uiData
     UINo -> return ()
   putStrLn "Terminating"
