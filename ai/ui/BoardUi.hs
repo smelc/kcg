@@ -8,8 +8,15 @@ where
 
 import Board
 import qualified Data.Map.Strict as Map
+import Debug.Trace
 
-cellPixelSize = 16 * 3
+cellPixelSize = 24 * 3
+
+-- | The number of cells in the background, horizontally
+cellBgWidth = 17
+
+-- | The number of cells in the background, vertically
+cellBgHeight = 26
 
 -- | The width of a card, in cells
 cellCardWidth = 3
@@ -49,6 +56,8 @@ times fc t = (fst fc * t, snd fc * t)
 
 plus fc1 fc2 = (fst fc1 + fst fc2, snd fc1 + snd fc2)
 
+minus fc1 fc2 = (fst fc1 - fst fc2, snd fc1 - snd fc2)
+
 cellToPixels (x, y) = (x * cellPixelSize, y * cellPixelSize)
 
 -- | The offset of a card, in pixels; from the bottom left of a background
@@ -65,7 +74,16 @@ cardPixelsOffset playerSpot cardSpot =
               + cellTeamVOffset
           )
       cell = plus base (plus team $ cardOnlyCellOffset cardSpot)
-   in cellToPixels cell
+      result = cellToPixels cell
+      bgPixelsWidth = (cellBgWidth * cellPixelSize) `div` 2
+      bgPixelsHeight = (cellBgHeight * cellPixelSize) `div` 2
+      -- Because images are centered according to the biggest one (the background):
+      result' = minus result (bgPixelsWidth, bgPixelsHeight)
+      -- Because images are centered according to the biggest one (the background):
+      cardHalfPixelsWidth = (cellCardWidth * cellPixelSize) `div` 2
+      cardHalfPixelsHeight = (cellCardHeight * cellPixelSize) `div` 2
+      result'' = plus result' (cardHalfPixelsWidth, cardHalfPixelsHeight)
+   in trace ("returning " ++ show result'' ++ " for " ++ show cardSpot) result''
   where
     xoffset = cellCardWidth + cellHOffset
     yoffset = cellCardHeight + cellVOffset

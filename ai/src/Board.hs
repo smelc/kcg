@@ -17,7 +17,7 @@ data CardSpot
   | BottomLeft
   | Bottom
   | BottomRight
-  deriving (Enum, Eq, Ord)
+  deriving (Enum, Eq, Ord, Show)
 
 type CardsOnTable = Map.Map CardSpot (Creature Core)
 

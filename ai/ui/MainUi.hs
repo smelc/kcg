@@ -21,16 +21,17 @@ import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes)
 import qualified Data.Set as Set
+import Data.Tuple.Extra (both)
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Juicy
+import Numeric.Extra (intToFloat)
 
 data UIException
   = LoadException FilePath
   | CreaturePictNotFoundException CreatureID
   | CreatureLoadException FilePath CreatureID
-  | InternalUnexpectedPictureType
-  | InternalUnexpectedPictureTypeAt FilePath
+  | InternalUnexpectedPictureType Picture
   deriving (Show, Typeable)
 
 instance Exception UIException
@@ -41,13 +42,22 @@ backgrounds = (assetsGenPath ++ "/forest.png") NE.:| []
 gameName = "Pixel Card Wars" -- Card Combat Retro
 
 pictureSize ::
+  (MonadThrow m) =>
   Picture ->
-  Maybe (Int, Int)
+  m (Float, Float)
 pictureSize picture =
   case picture of
-    Bitmap bd -> Just $ bitmapSize bd
-    BitmapSection rect _ -> Just $ rectSize rect
-    whatever -> Nothing
+    Bitmap bd -> return $ both intToFloat $ bitmapSize bd
+    BitmapSection rect _ -> return $ both intToFloat $ rectSize rect
+    Pictures subs -> do
+      subSizes <- traverse pictureSize subs
+      return $ foldr sizeMax (0, 0) subSizes
+      where
+        sizeMax (i1, i2) (j1, j2) = (max i1 j1, max i2 j2)
+    Translate x y pic -> do
+      (subx, suby) <- pictureSize pic
+      return (x + subx, y + suby)
+    whatever -> throw $ InternalUnexpectedPictureType picture
 
 data Assets
   = Assets
@@ -126,9 +136,9 @@ pictureBoard assets board =
             map (helper playerSpot) spotsAndCreatures
         )
         board'
-    helper' (intCoord, creatureId) =
+    helper' ((xoffset, yoffset), creatureId) =
       case creaturePics assets Map.!? creatureId of
-        Just pic -> pic
+        Just pic -> Translate (intToFloat xoffset) (intToFloat yoffset) pic
         Nothing -> throw $ CreaturePictNotFoundException creatureId
     cards' :: [Picture]
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
@@ -149,8 +159,8 @@ mainUI assets cards = do
     pictureBoard
       assets
       $ Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
-  picSize <- getOrThrow (pictureSize pic) InternalUnexpectedPictureType
-  liftIO $ display (InWindow gameName picSize (0, 0)) white pic
+  picSize <- pictureSize pic
+  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic
   where
     creatures :: [Creature Core] =
       map creatureUI2CreatureCore $ catMaybes $ map card2Creature cards
@@ -161,17 +171,17 @@ mainUI assets cards = do
     udMummy = getCardByID undeadMummy
     udVampire = getCardByID undeadVampire
     topPlayer = PlayerPart topCards Set.empty
-    topCards :: CardsOnTable =
+    topCards :: CardsOnTable = Map.empty
+    botPlayer = PlayerPart botCards Set.empty
+    botCards :: CardsOnTable =
       listToCardsOnTable
         [ Nothing,
           Just udVampire,
           Just udMummy,
-          Just udArcher,
-          Just udArcher,
-          Nothing
+          Nothing,
+          Nothing,
+          Just udArcher
         ]
-    botPlayer = PlayerPart botCards Set.empty
-    botCards :: CardsOnTable = undefined
 
 -- | Loads a background and display it
 mainUIDeprecated ::
@@ -180,7 +190,7 @@ mainUIDeprecated ::
 mainUIDeprecated = do
   maybeBG <- liftIO $ loadJuicyPNG bgPath
   bg <- getOrThrow maybeBG $ LoadException bgPath
-  bgSize <- getOrThrow (pictureSize bg) $ InternalUnexpectedPictureTypeAt bgPath
-  liftIO $ display (InWindow gameName bgSize (0, 0)) white bg
+  bgSize <- pictureSize bg
+  liftIO $ display (InWindow gameName (both ceiling bgSize) (0, 0)) white bg
   where
     bgPath :: FilePath = NE.head backgrounds
