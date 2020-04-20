@@ -19,7 +19,7 @@ import Data.Bifunctor
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes)
+import Data.Maybe (catMaybes, mapMaybe)
 import qualified Data.Set as Set
 import Data.Tuple.Extra (both)
 import Graphics.Gloss
@@ -111,12 +111,13 @@ loadAssets ::
 loadAssets uiData = do
   bgs <- loadBackgrounds
   assocList <- liftIO $ traverse entryMaker uiData
-  return $ Assets bgs $ Map.fromList assocList
+  return $ Assets bgs $ Map.fromListWith handleDuplicate assocList
   where
     entryMaker :: CreatureID -> IO (CreatureID, Picture)
     entryMaker id = do
       v <- loadCreature id
       return (id, v)
+    handleDuplicate = error "Duplicate keys found"
 
 -- | Builds the picture of a board
 pictureBoard ::
@@ -156,23 +157,12 @@ undeadMummy = CreatureID Mummy Undead
 
 undeadVampire = CreatureID Vampire Undead
 
-mainUI ::
-  (MonadIO m, MonadThrow m) =>
-  Assets ->
-  [Card UI] ->
-  m ()
-mainUI assets cards = do
-  pic <-
-    pictureBoard
-      assets
-      $ Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
-  let pic' = Scale 0.66 0.66 pic
-  picSize <- pictureSize pic'
-  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
+exampleBoard :: [Card UI] -> Board
+exampleBoard cards =
+  Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
   where
     creatures :: [Creature Core] =
-      map creatureUI2CreatureCore $ catMaybes $ map card2Creature cards
-    creaturePics' :: Map.Map CreatureID Picture = creaturePics assets
+      map creatureUI2CreatureCore $ mapMaybe card2Creature cards
     getCardByID searched =
       head $ filter (\c -> creatureId c == searched) creatures
     hGeneral = getCardByID humanGeneral
@@ -197,6 +187,22 @@ mainUI assets cards = do
           Just hGeneral,
           Just hSpearman
         ]
+
+mainUI ::
+  (MonadIO m, MonadThrow m) =>
+  Assets ->
+  [Card UI] ->
+  m ()
+mainUI assets cards = do
+  pic <-
+    pictureBoard
+      assets
+      board
+  let pic' = Scale 0.66 0.66 pic
+  picSize <- pictureSize pic'
+  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
+  where
+    board = exampleBoard cards
 
 -- | Loads a background and display it
 mainUIDeprecated ::
