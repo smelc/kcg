@@ -121,12 +121,13 @@ loadAssets uiData = do
 
 -- | Builds the picture of a board
 pictureBoard ::
-  (MonadIO m, MonadThrow m) =>
+  forall m. (MonadThrow m) =>
   Assets ->
   Board ->
   m Picture
-pictureBoard assets board =
-  return $ mconcat (bg : cards')
+pictureBoard assets board = do
+  cards''' <- cards''
+  return $ mconcat (bg : cards''')
   where
     bg :: Picture = NE.head $ backgroundPics assets
     board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
@@ -142,10 +143,18 @@ pictureBoard assets board =
         board'
     helper' ((xoffset, yoffset), creatureId) =
       case creaturePics assets Map.!? creatureId of
-        Just pic -> Translate (intToFloat xoffset) (intToFloat yoffset) pic
-        Nothing -> throw $ CreaturePictNotFoundException creatureId
-    cards' :: [Picture]
+        Just pic -> return $ Translate (intToFloat xoffset) (intToFloat yoffset) pic
+        Nothing -> throwM $ CreaturePictNotFoundException creatureId
+    cards' :: [m Picture]
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
+    cards'' :: m [Picture]
+    cards'' = sequence cards'
+
+-- unsafePictureBoard :: Assets -> Board -> Picture
+-- unsafePictureBoard assets board =
+--   Control.Monad.Catch.catch safe (throw )
+--   where
+--     safe = pictureBoard assets board
 
 humanGeneral = CreatureID General Human
 
@@ -187,6 +196,15 @@ exampleBoard cards =
           Just hGeneral,
           Just hSpearman
         ]
+
+mainSimulate :: (MonadIO m, MonadThrow m) => Assets -> [Card 'UI] -> m ()
+mainSimulate assets cards =
+  liftIO $ simulate display' white fps board unsafePictureBoard simulator
+  where
+    board = exampleBoard cards
+    display' = InWindow gameName (800, 600) (0, 0)
+    fps = 60
+    simulator = undefined
 
 mainUI ::
   (MonadIO m, MonadThrow m) =>
