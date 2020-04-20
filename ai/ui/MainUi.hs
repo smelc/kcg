@@ -54,6 +54,9 @@ pictureSize picture =
       return $ foldr sizeMax (0, 0) subSizes
       where
         sizeMax (i1, i2) (j1, j2) = (max i1 j1, max i2 j2)
+    Scale xmult ymult pic -> do
+      (subx, suby) <- pictureSize pic
+      return (xmult * subx, ymult * suby)
     Translate x y pic -> do
       (subx, suby) <- pictureSize pic
       return (x + subx, y + suby)
@@ -143,6 +146,10 @@ pictureBoard assets board =
     cards' :: [Picture]
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
 
+humanGeneral = CreatureID General Human
+
+humanSpearman = CreatureID Spearman Human
+
 undeadArcher = CreatureID Archer Undead
 
 undeadMummy = CreatureID Mummy Undead
@@ -159,28 +166,36 @@ mainUI assets cards = do
     pictureBoard
       assets
       $ Map.fromList [(PlayerBottom, botPlayer), (PlayerTop, topPlayer)]
-  picSize <- pictureSize pic
-  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic
+  let pic' = Scale 0.66 0.66 pic
+  picSize <- pictureSize pic'
+  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
   where
     creatures :: [Creature Core] =
       map creatureUI2CreatureCore $ catMaybes $ map card2Creature cards
     creaturePics' :: Map.Map CreatureID Picture = creaturePics assets
     getCardByID searched =
       head $ filter (\c -> creatureId c == searched) creatures
+    hGeneral = getCardByID humanGeneral
+    hSpearman = getCardByID humanSpearman
     udArcher = getCardByID undeadArcher
     udMummy = getCardByID undeadMummy
     udVampire = getCardByID undeadVampire
     topPlayer = PlayerPart topCards Set.empty
-    topCards :: CardsOnTable = Map.empty
+    topCards :: CardsOnTable =
+      listToCardsOnTable
+        [ Nothing,
+          Just udArcher,
+          Nothing,
+          Nothing,
+          Just udVampire,
+          Just udMummy
+        ]
     botPlayer = PlayerPart botCards Set.empty
     botCards :: CardsOnTable =
       listToCardsOnTable
         [ Nothing,
-          Just udVampire,
-          Just udMummy,
-          Nothing,
-          Nothing,
-          Just udArcher
+          Just hGeneral,
+          Just hSpearman
         ]
 
 -- | Loads a background and display it

@@ -35,7 +35,7 @@ cellHOffset = 1
 cellVOffset = 1
 
 -- | The number of cells between teams, vertically
-cellTeamVOffset = 1
+cellTeamVOffset = 2
 
 -- TODO Use gloss' Vector type instead
 
