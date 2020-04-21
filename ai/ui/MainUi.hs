@@ -3,6 +3,7 @@
 
 module MainUi
   ( loadAssets,
+    mainSimulate,
     mainUI,
   )
 where
@@ -121,13 +122,11 @@ loadAssets uiData = do
 
 -- | Builds the picture of a board
 pictureBoard ::
-  forall m. (MonadThrow m) =>
   Assets ->
   Board ->
-  m Picture
-pictureBoard assets board = do
-  cards''' <- cards''
-  return $ mconcat (bg : cards''')
+  Picture
+pictureBoard assets board =
+  mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
     board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
@@ -143,18 +142,9 @@ pictureBoard assets board = do
         board'
     helper' ((xoffset, yoffset), creatureId) =
       case creaturePics assets Map.!? creatureId of
-        Just pic -> return $ Translate (intToFloat xoffset) (intToFloat yoffset) pic
-        Nothing -> throwM $ CreaturePictNotFoundException creatureId
-    cards' :: [m Picture]
+        Just pic -> Translate (intToFloat xoffset) (intToFloat yoffset) pic
+        Nothing -> throw $ CreaturePictNotFoundException creatureId
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
-    cards'' :: m [Picture]
-    cards'' = sequence cards'
-
--- unsafePictureBoard :: Assets -> Board -> Picture
--- unsafePictureBoard assets board =
---   Control.Monad.Catch.catch safe (throw )
---   where
---     safe = pictureBoard assets board
 
 humanGeneral = CreatureID General Human
 
@@ -199,7 +189,7 @@ exampleBoard cards =
 
 mainSimulate :: (MonadIO m, MonadThrow m) => Assets -> [Card 'UI] -> m ()
 mainSimulate assets cards =
-  liftIO $ simulate display' white fps board unsafePictureBoard simulator
+  liftIO $ simulate display' white fps board (pictureBoard assets) simulator
   where
     board = exampleBoard cards
     display' = InWindow gameName (800, 600) (0, 0)
@@ -212,11 +202,8 @@ mainUI ::
   [Card UI] ->
   m ()
 mainUI assets cards = do
-  pic <-
-    pictureBoard
-      assets
-      board
-  let pic' = Scale 0.66 0.66 pic
+  let pic = pictureBoard assets board
+      pic' = Scale 0.66 0.66 pic
   picSize <- pictureSize pic'
   liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
   where

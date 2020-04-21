@@ -19,10 +19,7 @@ import System.Exit
 
 data UIMode = UIYes | UINo
 
-data Options
-  = Options
-      { optUIMode :: UIMode
-      }
+newtype Options = Options {optUIMode :: UIMode}
 
 optionsParser :: Opt.Parser Options
 optionsParser =
@@ -55,6 +52,6 @@ main = do
       Prelude.putStrLn "Opening UI"
       let creatureIDs = mapMaybe (fmap creatureId . card2Creature) uiData
       assets <- loadAssets creatureIDs
-      mainUI assets uiData
+      mainSimulate assets uiData
     UINo -> return ()
   putStrLn "Terminating"
