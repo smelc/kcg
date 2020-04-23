@@ -1,9 +1,10 @@
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module MainUi
   ( loadAssets,
-    mainSimulate,
+    mainPlay,
     mainUI,
   )
 where
@@ -23,10 +24,13 @@ import qualified Data.Map.Strict as Map
 import Data.Maybe (catMaybes, mapMaybe)
 import qualified Data.Set as Set
 import Data.Tuple.Extra (both)
+import Debug.Trace
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
+import Graphics.Gloss.Interface.IO.Interact
 import Graphics.Gloss.Juicy
 import Numeric.Extra (intToFloat)
+import World
 
 data UIException
   = LoadException FilePath
@@ -187,14 +191,21 @@ exampleBoard cards =
           Just hSpearman
         ]
 
-mainSimulate :: (MonadIO m, MonadThrow m) => Assets -> [Card 'UI] -> m ()
-mainSimulate assets cards =
-  liftIO $ simulate display' white fps board (pictureBoard assets) simulator
+eventHandler :: Event -> World -> World
+eventHandler e w =
+  trace ("Handling " ++ show e) w
+
+mainPlay :: (MonadIO m, MonadThrow m) => Assets -> [Card 'UI] -> m ()
+mainPlay assets cards =
+  liftIO $ play display' white fps world drawer eventHandler stepper
   where
     board = exampleBoard cards
+    world = World board
     display' = InWindow gameName (800, 600) (0, 0)
     fps = 60
-    simulator = undefined
+    drawer :: World -> Picture
+    drawer World {board} = pictureBoard assets board
+    stepper f w = w
 
 mainUI ::
   (MonadIO m, MonadThrow m) =>

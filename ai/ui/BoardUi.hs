@@ -83,7 +83,8 @@ cardPixelsOffset playerSpot cardSpot =
       cardHalfPixelsWidth = (cellCardWidth * cellPixelSize) `div` 2
       cardHalfPixelsHeight = (cellCardHeight * cellPixelSize) `div` 2
       result'' = plus result' (cardHalfPixelsWidth, cardHalfPixelsHeight)
-   in trace ("returning " ++ show result'' ++ " for " ++ show cardSpot) result''
+   in -- trace ("returning " ++ show result'' ++ " for " ++ show cardSpot) result''
+      result''
   where
     xoffset = cellCardWidth + cellHOffset
     yoffset = cellCardHeight + cellVOffset
