@@ -25,6 +25,7 @@ import Data.Maybe (catMaybes, mapMaybe)
 import qualified Data.Set as Set
 import Data.Tuple.Extra (both)
 import Debug.Trace
+import GHC.Stack (HasCallStack)
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
 import Graphics.Gloss.Interface.IO.Interact
@@ -47,24 +48,24 @@ backgrounds = (assetsGenPath ++ "/forest.png") NE.:| []
 gameName = "Pixel Card Wars" -- Card Combat Retro
 
 pictureSize ::
-  (MonadThrow m) =>
+  HasCallStack =>
   Picture ->
-  m (Float, Float)
+  (Float, Float)
 pictureSize picture =
   case picture of
-    Bitmap bd -> return $ both intToFloat $ bitmapSize bd
-    BitmapSection rect _ -> return $ both intToFloat $ rectSize rect
+    Bitmap bd -> both intToFloat $ bitmapSize bd
+    BitmapSection rect _ -> both intToFloat $ rectSize rect
     Pictures subs -> do
-      subSizes <- traverse pictureSize subs
-      return $ foldr sizeMax (0, 0) subSizes
+      let subSizes = map pictureSize subs
+      foldr sizeMax (0, 0) subSizes
       where
         sizeMax (i1, i2) (j1, j2) = (max i1 j1, max i2 j2)
     Scale xmult ymult pic -> do
-      (subx, suby) <- pictureSize pic
-      return (xmult * subx, ymult * suby)
+      let (subx, suby) = pictureSize pic
+      (xmult * subx, ymult * suby)
     Translate x y pic -> do
-      (subx, suby) <- pictureSize pic
-      return (x + subx, y + suby)
+      let (subx, suby) = pictureSize pic
+      (x + subx, y + suby)
     whatever -> throw $ InternalUnexpectedPictureType picture
 
 data Assets
@@ -126,6 +127,7 @@ loadAssets uiData = do
 
 -- | Builds the picture of a board
 pictureBoard ::
+  HasCallStack =>
   Assets ->
   Board ->
   Picture
@@ -200,11 +202,13 @@ mainPlay assets cards =
   liftIO $ play display' white fps world drawer eventHandler stepper
   where
     board = exampleBoard cards
+    boardPicture = pictureBoard assets board
     world = World board
-    display' = InWindow gameName (800, 600) (0, 0)
+    (framex, framey) = pictureSize boardPicture
+    display' = InWindow gameName (round framex, round framey) (0, 0)
     fps = 60
     drawer :: World -> Picture
-    drawer World {board} = pictureBoard assets board
+    drawer World {board} = boardPicture
     stepper f w = w
 
 mainUI ::
@@ -215,19 +219,7 @@ mainUI ::
 mainUI assets cards = do
   let pic = pictureBoard assets board
       pic' = Scale 0.66 0.66 pic
-  picSize <- pictureSize pic'
+      picSize = pictureSize pic'
   liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
   where
     board = exampleBoard cards
-
--- | Loads a background and display it
-mainUIDeprecated ::
-  (MonadIO m, MonadThrow m) =>
-  m ()
-mainUIDeprecated = do
-  maybeBG <- liftIO $ loadJuicyPNG bgPath
-  bg <- getOrThrow maybeBG $ LoadException bgPath
-  bgSize <- pictureSize bg
-  liftIO $ display (InWindow gameName (both ceiling bgSize) (0, 0)) white bg
-  where
-    bgPath :: FilePath = NE.head backgrounds
