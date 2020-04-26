@@ -95,7 +95,7 @@ creatureUI2CreatureCore Creature {creatureId, hp, attack, moral, victoryPoints, 
 card2Creature :: Card p -> Maybe (Creature p)
 card2Creature =
   \case
-    CreatureCard creature -> Just $ creature
+    CreatureCard creature -> Just creature
     NeutralCard _ -> Nothing
     ItemCard _ -> Nothing
 

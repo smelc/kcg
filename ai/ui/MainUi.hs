@@ -71,7 +71,8 @@ pictureSize picture =
 data Assets
   = Assets
       { backgroundPics :: NE.NonEmpty Picture,
-        creaturePics :: Map.Map CreatureID Picture
+        creaturePics :: Map.Map CreatureID Picture,
+        cardOverlay :: Picture
       }
 
 getOrThrow ::
@@ -84,30 +85,25 @@ getOrThrow ma e =
     Nothing -> throw e
     Just a -> return a
 
+loadOrThrowJuicyPNG :: (MonadIO m, MonadThrow m) => FilePath -> m Picture
+loadOrThrowJuicyPNG filepath = do
+  maybePic <- liftIO $ loadJuicyPNG filepath
+  pic :: Picture <- getOrThrow maybePic $ LoadException filepath
+  return pic
+
 loadBackgrounds ::
   (MonadIO m, MonadThrow m) =>
   m (NE.NonEmpty Picture)
 loadBackgrounds = do
-  let pics = NE.map loadBackground backgrounds
+  let pics = NE.map loadOrThrowJuicyPNG backgrounds
   traverse Prelude.id pics
-  where
-    loadBackground :: (MonadIO m, MonadThrow m) => FilePath -> m Picture
-    loadBackground filepath = do
-      maybePic <- liftIO $ loadJuicyPNG filepath
-      pic :: Picture <- getOrThrow maybePic $ LoadException filepath
-      return pic
 
 loadCreature ::
   (MonadIO m, MonadThrow m) =>
   CreatureID ->
   m Picture
-loadCreature creatureID = do
-  maybePic <- liftIO $ loadJuicyPNG path
-  case maybePic of
-    Nothing -> throw $ CreatureLoadException path creatureID
-    Just pic -> return pic
-  where
-    path = creatureID2FilePath creatureID
+loadCreature creatureID =
+  loadOrThrowJuicyPNG $ creatureID2FilePath creatureID
 
 -- | Loads backgrounds and creatures assets from disk
 loadAssets ::
@@ -117,7 +113,12 @@ loadAssets ::
 loadAssets uiData = do
   bgs <- loadBackgrounds
   assocList <- liftIO $ traverse entryMaker uiData
-  return $ Assets bgs $ Map.fromListWith handleDuplicate assocList
+  cardOverlay <- loadOrThrowJuicyPNG $ assetsGenPath ++ "/" ++ "card-overlay.png"
+  return $
+    Assets
+      bgs
+      (Map.fromListWith handleDuplicate assocList)
+      cardOverlay
   where
     entryMaker :: CreatureID -> IO (CreatureID, Picture)
     entryMaker id = do
@@ -129,9 +130,9 @@ loadAssets uiData = do
 pictureBoard ::
   HasCallStack =>
   Assets ->
-  Board ->
+  (Board, Maybe Event) ->
   Picture
-pictureBoard assets board =
+pictureBoard assets (board, maybeEvent) =
   mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
@@ -202,7 +203,7 @@ mainPlay assets cards =
   liftIO $ play display' white fps world drawer eventHandler stepper
   where
     board = exampleBoard cards
-    boardPicture = pictureBoard assets board
+    boardPicture = pictureBoard assets (board, Nothing)
     world = World board
     (framex, framey) = pictureSize boardPicture
     display' = InWindow gameName (round framex, round framey) (0, 0)
@@ -217,7 +218,7 @@ mainUI ::
   [Card UI] ->
   m ()
 mainUI assets cards = do
-  let pic = pictureBoard assets board
+  let pic = pictureBoard assets (board, Nothing)
       pic' = Scale 0.66 0.66 pic
       picSize = pictureSize pic'
   liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
