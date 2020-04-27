@@ -19,6 +19,9 @@ data CardSpot
   | BottomRight
   deriving (Enum, Eq, Ord, Show)
 
+allCardsSpots :: [CardSpot]
+allCardsSpots = [TopLeft ..]
+
 type CardsOnTable = Map.Map CardSpot (Creature Core)
 
 -- | A convenience method for building an instance of CardsOnTable
@@ -27,16 +30,15 @@ type CardsOnTable = Map.Map CardSpot (Creature Core)
 -- | allow to skip a spot. Items after the sixth one are simply ignored.
 listToCardsOnTable :: [Maybe (Creature Core)] -> CardsOnTable
 listToCardsOnTable maybeCreatures =
-  impl (take (length spots) maybeCreatures) 0 Map.empty
+  impl (take (length allCardsSpots) maybeCreatures) 0 Map.empty
   where
-    spots :: [CardSpot] = [TopLeft ..]
     impl :: [Maybe (Creature Core)] -> Int -> CardsOnTable -> CardsOnTable
     impl [] idx acc = acc
     impl (fst : tail) idx acc =
       let nextAcc =
             case fst of
               Nothing -> acc
-              Just creature -> Map.insert (spots !! idx) creature acc
+              Just creature -> Map.insert (allCardsSpots !! idx) creature acc
        in impl tail (idx + 1) nextAcc
 
 type CardsInHand = Set.Set (Card Core)
@@ -48,6 +50,9 @@ data PlayerPart
       }
 
 data PlayerSpot = PlayerBottom | PlayerTop
-  deriving (Eq, Ord)
+  deriving (Enum, Eq, Ord, Show)
+
+allPlayersSpots :: [PlayerSpot]
+allPlayersSpots = [PlayerBottom ..]
 
 type Board = Map.Map PlayerSpot PlayerPart

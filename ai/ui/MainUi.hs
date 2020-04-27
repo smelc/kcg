@@ -21,10 +21,11 @@ import Data.Bifunctor
 import Data.Dynamic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map.Strict as Map
-import Data.Maybe (catMaybes, mapMaybe)
+import Data.Maybe (catMaybes, listToMaybe, mapMaybe)
 import qualified Data.Set as Set
 import Data.Tuple.Extra (both)
 import Debug.Trace
+import Event
 import GHC.Stack (HasCallStack)
 import Graphics.Gloss
 import Graphics.Gloss.Data.Bitmap
@@ -103,7 +104,7 @@ pictureBoard ::
   Assets ->
   (Board, Maybe Event) ->
   Picture
-pictureBoard assets (board, maybeEvent) =
+pictureBoard assets@Assets {cardOverlay} (board, maybeEvent) =
   mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
@@ -120,7 +121,9 @@ pictureBoard assets (board, maybeEvent) =
         board'
     helper' ((xoffset, yoffset), creatureId) =
       case creaturePics assets Map.!? creatureId of
-        Just pic -> Translate (intToFloat xoffset) (intToFloat yoffset) pic
+        Just pic ->
+          let (picx, picy) = (intToFloat xoffset, intToFloat yoffset)
+           in Translate picx picy pic
         Nothing -> throw $ CreaturePictNotFoundException creatureId
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
 
@@ -166,8 +169,21 @@ exampleBoard cards =
         ]
 
 eventHandler :: Event -> World -> World
-eventHandler e w =
-  trace ("Handling " ++ show e) w
+eventHandler e world@World {board, overlaid} =
+  let allSpots = [(p, c, cardPixelsOffset p c) | p <- allPlayersSpots, c <- allCardsSpots]
+      allSpots' = map (\(p, c, intCoord) -> (p, c, both intToFloat intCoord)) allSpots
+      hoveredSpots =
+        filter
+          ( \(_, _, rectCenter) ->
+              isEventIn
+                e
+                (both intToFloat cardPixelsSize)
+                rectCenter
+          )
+          allSpots'
+      hoveredSpot = listToMaybe hoveredSpots
+      hoveredSpot' = fmap (\(f, s, _) -> (f, s)) hoveredSpot
+   in trace ("Handling " ++ show e) World board hoveredSpot'
 
 mainPlay :: (MonadIO m, MonadThrow m) => Assets -> [Card 'UI] -> m ()
 mainPlay assets cards =
@@ -175,7 +191,7 @@ mainPlay assets cards =
   where
     board = exampleBoard cards
     boardPicture = pictureBoard assets (board, Nothing)
-    world = World board
+    world = World board undefined
     (framex, framey) = pictureSize boardPicture
     display' = InWindow gameName (round framex, round framey) (0, 0)
     fps = 60

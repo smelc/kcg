@@ -2,6 +2,7 @@
 
 module BoardUi
   ( cardPixelsOffset,
+    cardPixelsSize,
     IntCoord,
   )
 where
@@ -60,7 +61,11 @@ minus fc1 fc2 = (fst fc1 - fst fc2, snd fc1 - snd fc2)
 
 cellToPixels (x, y) = (x * cellPixelSize, y * cellPixelSize)
 
--- | The offset of a card, in pixels; from the bottom left of a background
+cardPixelsSize :: IntCoord
+cardPixelsSize = (cellCardWidth * cellPixelSize, cellCardHeight * cellPixelSize)
+
+-- | The offset of a card, in pixels; from the background.
+-- | In gloss coordinates, i.e. relative to the background's center
 cardPixelsOffset :: PlayerSpot -> CardSpot -> IntCoord
 cardPixelsOffset playerSpot cardSpot =
   let base = botLeftCellOffset
@@ -80,8 +85,8 @@ cardPixelsOffset playerSpot cardSpot =
       -- Because images are centered according to the biggest one (the background):
       result' = minus result (bgPixelsWidth, bgPixelsHeight)
       -- Because images are centered according to the biggest one (the background):
-      cardHalfPixelsWidth = (cellCardWidth * cellPixelSize) `div` 2
-      cardHalfPixelsHeight = (cellCardHeight * cellPixelSize) `div` 2
+      cardHalfPixelsWidth = fst cardPixelsSize `div` 2
+      cardHalfPixelsHeight = snd cardPixelsSize `div` 2
       result'' = plus result' (cardHalfPixelsWidth, cardHalfPixelsHeight)
    in -- trace ("returning " ++ show result'' ++ " for " ++ show cardSpot) result''
       result''

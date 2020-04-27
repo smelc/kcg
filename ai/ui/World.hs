@@ -4,5 +4,10 @@ module World
 where
 
 import Board
+import Card
 
-newtype World = World {board :: Board}
+data World
+  = World
+      { board :: Board,
+        overlaid :: Maybe (PlayerSpot, CardSpot)
+      }
