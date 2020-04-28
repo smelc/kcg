@@ -5,7 +5,6 @@
 module MainUi
   ( loadAssets,
     mainPlay,
-    mainUI,
   )
 where
 
@@ -99,17 +98,22 @@ loadAssets uiData = do
     handleDuplicate = error "Duplicate keys found"
 
 -- | Builds the picture of a board
-pictureBoard ::
+pictureWorld ::
   HasCallStack =>
   Assets ->
-  (Board, Maybe Event) ->
+  World ->
   Picture
-pictureBoard assets@Assets {cardOverlay} (board, maybeEvent) =
+pictureWorld assets@Assets {cardOverlay} World {board, overlaid} =
   mconcat (bg : cards')
   where
     bg :: Picture = NE.head $ backgroundPics assets
     board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
     board' = Map.toList $ Map.map (Map.toList . visible) board
+    board'' :: [(PlayerSpot, CardSpot, Creature 'Core)]
+    board'' =
+      concatMap
+        (\(playerSpot, sublist) -> [(playerSpot, cardSpot, creature) | (cardSpot, creature) <- sublist])
+        board'
     helper :: PlayerSpot -> (CardSpot, a) -> (IntCoord, a)
     helper p (c, w) = (cardPixelsOffset p c, w)
     cards :: [(IntCoord, Creature Core)]
@@ -119,12 +123,14 @@ pictureBoard assets@Assets {cardOverlay} (board, maybeEvent) =
             map (helper playerSpot) spotsAndCreatures
         )
         board'
+    helper' :: (IntCoord, CreatureID) -> Picture
     helper' ((xoffset, yoffset), creatureId) =
       case creaturePics assets Map.!? creatureId of
         Just pic ->
           let (picx, picy) = (intToFloat xoffset, intToFloat yoffset)
            in Translate picx picy pic
         Nothing -> throw $ CreaturePictNotFoundException creatureId
+    cards' :: [Picture]
     cards' = map (helper' . Data.Bifunctor.second creatureId) cards
 
 humanGeneral = CreatureID General Human
@@ -190,24 +196,11 @@ mainPlay assets cards =
   liftIO $ play display' white fps world drawer eventHandler stepper
   where
     board = exampleBoard cards
-    boardPicture = pictureBoard assets (board, Nothing)
+    boardPicture = pictureWorld assets $ World board Nothing
     world = World board undefined
     (framex, framey) = pictureSize boardPicture
     display' = InWindow gameName (round framex, round framey) (0, 0)
     fps = 60
     drawer :: World -> Picture
-    drawer World {board} = boardPicture
+    drawer = pictureWorld assets
     stepper f w = w
-
-mainUI ::
-  (MonadIO m, MonadThrow m) =>
-  Assets ->
-  [Card UI] ->
-  m ()
-mainUI assets cards = do
-  let pic = pictureBoard assets (board, Nothing)
-      pic' = Scale 0.66 0.66 pic
-      picSize = pictureSize pic'
-  liftIO $ display (InWindow gameName (both ceiling picSize) (0, 0)) white pic'
-  where
-    board = exampleBoard cards
