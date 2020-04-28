@@ -109,29 +109,38 @@ pictureWorld assets@Assets {cardOverlay} World {board, overlaid} =
     bg :: Picture = NE.head $ backgroundPics assets
     board' :: [(PlayerSpot, [(CardSpot, Creature Core)])]
     board' = Map.toList $ Map.map (Map.toList . visible) board
-    board'' :: [(PlayerSpot, CardSpot, Creature 'Core)]
+    board'' :: Map.Map (PlayerSpot, CardSpot) (Creature Core)
     board'' =
-      concatMap
-        (\(playerSpot, sublist) -> [(playerSpot, cardSpot, creature) | (cardSpot, creature) <- sublist])
-        board'
-    helper :: PlayerSpot -> (CardSpot, a) -> (IntCoord, a)
-    helper p (c, w) = (cardPixelsOffset p c, w)
-    cards :: [(IntCoord, Creature Core)]
-    cards =
-      concatMap
-        ( \(playerSpot, spotsAndCreatures :: [(CardSpot, Creature Core)]) ->
-            map (helper playerSpot) spotsAndCreatures
+      Map.fromList $
+        concatMap
+          (\(playerSpot, sublist) -> [((playerSpot, cardSpot), creature) | (cardSpot, creature) <- sublist])
+          board'
+    board''' :: Map.Map (PlayerSpot, CardSpot) (IntCoord, Picture)
+    board''' =
+      Map.mapWithKey
+        ( \(playerSpot, cardSpot) Creature {creatureId} ->
+            ( cardPixelsOffset playerSpot cardSpot,
+              creaturePics assets Map.! creatureId
+            )
         )
-        board'
-    helper' :: (IntCoord, CreatureID) -> Picture
-    helper' ((xoffset, yoffset), creatureId) =
-      case creaturePics assets Map.!? creatureId of
-        Just pic ->
-          let (picx, picy) = (intToFloat xoffset, intToFloat yoffset)
-           in Translate picx picy pic
-        Nothing -> throw $ CreaturePictNotFoundException creatureId
+        board''
     cards' :: [Picture]
-    cards' = map (helper' . Data.Bifunctor.second creatureId) cards
+    cards' =
+      Map.elems $
+        Map.mapWithKey
+          ( \(playerSpot, cardSpot) ((xoffset, yoffset), pic) ->
+              let base = pic
+               in let base' = case overlaid of
+                        Nothing -> base
+                        Just (overlayPlayerSpot, overlayCardSpot) ->
+                          if overlayPlayerSpot == playerSpot
+                            && overlayCardSpot == cardSpot
+                            then trace "overlaying" $ Pictures [cardOverlay, base]
+                            else base
+                   in let (picx, picy) = (intToFloat xoffset, intToFloat yoffset)
+                       in Translate picx picy pic
+          )
+          board'''
 
 humanGeneral = CreatureID General Human
 
